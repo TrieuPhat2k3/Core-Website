@@ -13,7 +13,7 @@ const events = [
     summary: "Chiều ngày 18/06/2025, tại Trường Đại học Hùng Vương TP.HCM, hội thảo do 2G Education phối hợp cùng Trung tâm Văn hóa Doanh nghiệp - CORE tổ chức đã diễn ra thành công rực rỡ!",
     views: 1017,
     date: "18/06/2025",
-    image: "window.svg",
+    image: "/assets/event-example2.jpg",
   },
   {
     id: 2,

@@ -1,9 +1,15 @@
 import React from "react";
+import HeroCourse from "../../components/course/HeroCourse";
+import CourseList from "../../components/course/CourseList";
+import Container from "../../components/ui/Container";
 
 export default function CoursePage() {
     return (
-        <div className="py-10 text-center text-2xl font-bold text-blue-900">
-            Welcome to the Course page!
-        </div>
+        <>
+            <HeroCourse />
+            <Container className="py-12">
+                <CourseList />
+            </Container>
+        </>
     );
 }

@@ -1,9 +1,15 @@
 import React from "react";
+import HeroContact from "../../components/contact/HeroContact";
+import ContactForm from "../../components/contact/ContactForm";
+import Container from "../../components/ui/Container";
 
 export default function ContactPage() {
     return (
-        <div className="py-10 text-center text-2xl font-bold text-blue-900">
-            Welcome to the Contact page!
-        </div>
+        <>
+            <HeroContact />
+            <Container className="py-12">
+                <ContactForm />
+            </Container>
+        </>
     );
 }

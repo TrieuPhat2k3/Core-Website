@@ -4,9 +4,9 @@ import Container from "../ui/Container";
 
 const HeroEvent: React.FC = () => {
   return (
-    <section className="relative isolate bg-cover bg-center text-white min-h-[420px]">
+    <section className="relative bg-cover bg-center text-white min-h-[420px]">
       <Image
-        src="/assets/puzzle-pieces3.jpg"
+        src="/assets/event-example.jpg"
         alt="Hero"
         fill
         className="object-cover z-0"

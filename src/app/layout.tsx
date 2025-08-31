@@ -19,7 +19,9 @@ export default function RootLayout({
       <body className="bg-white text-gray-800">
         <Header />
         <Navbar />
-        {children}
+        <div className="relative">
+          {children}
+        </div>
         <Footer />
       </body>
     </html>

@@ -13,28 +13,28 @@ const events = [
     summary: "Chiều ngày 18/06/2025, tại Trường Đại học Hùng Vương TP.HCM, hội thảo do 2G Education phối hợp cùng Trung tâm Văn hóa Doanh nghiệp - CORE tổ chức đã diễn ra thành công rực rỡ!",
     views: 1017,
     date: "18/06/2025",
-    image: "window.svg",
+    image: "/assets/event-example2.jpg",
     content: `
       <p>Chiều ngày 18/06/2025, tại Trường Đại học Hùng Vương TP.HCM, hội thảo do 2G Education phối hợp cùng Trung tâm Văn hóa Doanh nghiệp - CORE tổ chức đã diễn ra thành công rực rỡ!</p>
       
       <p>Sự kiện thu hút sự tham gia đông đảo của các bạn sinh viên, đặc biệt là sinh viên năm cuối đang chuẩn bị cho kỳ thi chuẩn đầu ra ngoại ngữ quốc tế – một cột mốc quan trọng trên hành trình chạm đến cơ hội học tập và nghề nghiệp tương lai.</p>
       
       <p>Diễn giả đồng hành cùng sự kiện:</p>
-
-      <p></p>
     `,
     speaker: {
       name: "Chị Lương Thị Mỹ Hạnh",
       title: "Head of Academic at 2G Signature Campus, ACC (ICF) certified coach",
       experience: "Hơn 10 năm kinh nghiệm trong việc thiết kế và phát triển các chương trình đào tạo",
-      image: "/assets/student.png"
+      image: "/assets/cutevent-example3.png"
     },
     benefits: [
       "Hiểu rõ cấu trúc & sự khác biệt giữa IELTS và APTIS",
       "Nắm bắt chiến lược ôn luyện sát thực tế và dễ áp dụng",
       "Giải đáp trực tiếp thắc mắc cá nhân, định hướng lộ trình thi phù hợp",
       "Nhận bộ tài liệu luyện thi chất lượng và những phần quà hấp dẫn từ BTC"
-    ]
+    ],
+    showContactInfo: true,
+    showCallToAction: true
   },
   {
     id: 2,
@@ -44,7 +44,16 @@ const events = [
     summary: "Mô tả ngắn về sự kiện...",
     views: 0,
     date: "/.../...",
-    image: "/assets/business.jpg",
+    image: "window.svg",
+    content: `
+      <p>Đây là mô tả chi tiết cho sự kiện thứ hai. Mỗi sự kiện sẽ có nội dung riêng biệt.</p>
+      
+      <p>Nội dung này chỉ hiển thị cho sự kiện có ID = 2.</p>
+    `,
+    speaker: null,
+    benefits: null,
+    showContactInfo: false,
+    showCallToAction: false
   },
   {
     id: 3,
@@ -54,7 +63,16 @@ const events = [
     summary: "Mô tả ngắn về sự kiện...",
     views: 0,
     date: "/.../...",
-    image: "/assets/conference.jpeg",
+    image: "window.svg",
+    content: `
+      <p>Đây là mô tả chi tiết cho sự kiện thứ ba. Mỗi sự kiện sẽ có nội dung riêng biệt.</p>
+      
+      <p>Nội dung này chỉ hiển thị cho sự kiện có ID = 3.</p>
+    `,
+    speaker: null,
+    benefits: null,
+    showContactInfo: false,
+    showCallToAction: false
   }
 ];
 
@@ -65,9 +83,9 @@ interface EventDetailProps {
 const EventDetail: React.FC<EventDetailProps> = ({ id }) => {
   const [currentRelatedPage, setCurrentRelatedPage] = useState(1);
   const relatedEventsPerPage = 2;
-  
+   
   const event = events.find(e => e.id.toString() === id);
-  
+   
   if (!event) {
     return (
       <div className="bg-[#f8f9fa] rounded-lg p-8 max-w-4xl mx-auto mt-8 text-center text-red-600">
@@ -75,6 +93,7 @@ const EventDetail: React.FC<EventDetailProps> = ({ id }) => {
       </div>
     );
   }
+
   const relatedEvents = events.filter(e => e.id !== event.id);
   const totalRelatedPages = Math.ceil(relatedEvents.length / relatedEventsPerPage);
   const currentRelatedEvents = relatedEvents.slice(
@@ -103,6 +122,7 @@ const EventDetail: React.FC<EventDetailProps> = ({ id }) => {
           </button>
         </div>
       </div>
+
       <div className="bg-white rounded-lg shadow-sm p-8">
         <div className="mb-6">
           <div className="text-gray-600 mb-2">{event.date}</div>
@@ -123,11 +143,13 @@ const EventDetail: React.FC<EventDetailProps> = ({ id }) => {
           </p>
         </div>
 
-        <div className="prose max-w-none mb-8">
-          <div dangerouslySetInnerHTML={{ __html: event.content || "" }} />
-        </div>
+        {event.content && (
+          <div className="prose max-w-none mb-8">
+            <div dangerouslySetInnerHTML={{ __html: event.content }} />
+          </div>
+        )}
 
-        {event.benefits && (
+        {event.benefits && event.benefits.length > 0 && (
           <div className="mb-8">
             <h3 className="text-xl font-bold text-gray-900 mb-4">
               Hội thảo đã mang lại nhiều giá trị thiết thực cho người tham dự:
@@ -163,29 +185,33 @@ const EventDetail: React.FC<EventDetailProps> = ({ id }) => {
           </div>
         )}
 
-        <div className="mb-8 p-6 bg-blue-50 rounded-lg">
-          <p className="text-gray-700 mb-4">
-            Cảm ơn 2G Education, các giảng viên và sinh viên đã tham gia hội thảo đầy cảm hứng và thiết thực này. 
-            Bạn có thể xem album ảnh sự kiện tại: 
-            <a href="https://www.facebook.com/share/p/1JkGuc6Sqt/" className="text-blue-600 hover:underline ml-1">
-              https://www.facebook.com/share/p/1JkGuc6Sqt/
-            </a>
-          </p>
-          <p className="text-gray-700">
-            Hãy theo dõi Fanpage Trung tâm Văn hóa Doanh nghiệp-CORE-DHV để cập nhật các chương trình học thuật và kỹ năng mới nhất!
-          </p>
-        </div>
-
-        <div className="border-t pt-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">
-            Liên hệ Trung tâm Văn hóa Doanh Nghiệp – CORE:
-          </h3>
-          <div className="space-y-2 text-gray-700">
-            <p><strong>Địa chỉ:</strong> 736 Nguyễn Trãi, Phường 11, Quận 5, TP.HCM</p>
-            <p><strong>Email:</strong> core@dhv.edu.vn</p>
-            <p><strong>Hotline:</strong> 0934 827 742</p>
+        {event.showCallToAction && (
+          <div className="mb-8 p-6 bg-blue-50 rounded-lg">
+            <p className="text-gray-700 mb-4">
+              Cảm ơn 2G Education, các giảng viên và sinh viên đã tham gia hội thảo đầy cảm hứng và thiết thực này. 
+              Bạn có thể xem album ảnh sự kiện tại: 
+              <a href="https://www.facebook.com/share/p/1JkGuc6Sqt/" className="text-blue-600 hover:underline ml-1">
+                https://www.facebook.com/share/p/1JkGuc6Sqt/
+              </a>
+            </p>
+            <p className="text-gray-700">
+              Hãy theo dõi Fanpage Trung tâm Văn hóa Doanh nghiệp-CORE-DHV để cập nhật các chương trình học thuật và kỹ năng mới nhất!
+            </p>
           </div>
-        </div>
+        )}
+
+        {event.showContactInfo && (
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">
+              Liên hệ Trung tâm Văn hóa Doanh Nghiệp – CORE:
+            </h3>
+            <div className="space-y-2 text-gray-700">
+              <p><strong>Địa chỉ:</strong> 736 Nguyễn Trãi, Phường 11, Quận 5, TP.HCM</p>
+              <p><strong>Email:</strong> core@dhv.edu.vn</p>
+              <p><strong>Hotline:</strong> 0934 827 742</p>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="bg-white rounded-lg shadow-sm p-6">
