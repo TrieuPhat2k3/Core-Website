@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Container from "../ui/Container";
 import Button from "../ui/Button";
+import Link from "next/link";
 
 const newsPages = [
   [
@@ -127,7 +128,7 @@ const News: React.FC = () => {
           </button>
           <div className="grid gap-6 md:grid-cols-3">
             {currentNews.map((item, idx) => (
-              <a href="/event" key={idx} className="block">
+              <Link href="/event" key={idx} className="block">
                 <article className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 cursor-pointer hover:shadow-md transition-shadow">
                   {item.image ? (
                     <img
@@ -151,15 +152,15 @@ const News: React.FC = () => {
                       {item.desc}
                     </p>
                     {item.button && (
-                      <a href="/course">
+                      <Link href="/course">
                         <Button className={`mt-4 w-full ${item.buttonClass}`}>
                           {item.button}
                         </Button>
-                      </a>
+                      </Link>
                     )}
                   </div>
                 </article>
-              </a>
+              </Link>
             ))}
           </div>
           <button
