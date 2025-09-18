@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 export const metadata: Metadata = {
-  title: "CORE - Trung tâm Văn hóa Doanh nghiệp",
+  title: "CORE - Trung tâm Viện văn hóa Doanh nghiệp",
   description: "Đổi mới sáng tạo và hội tụ văn hóa doanh nghiệp",
 };
 

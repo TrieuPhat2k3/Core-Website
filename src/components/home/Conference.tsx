@@ -14,7 +14,7 @@ const Conference: React.FC = () => (
         <p className="mt-3 text-sm leading-6 text-slate-700">
           Trong chuỗi sự kiện chào mừng 30 năm thành lập Trường, Trường Đại học
           Hùng Vương TP.HCM, hội thảo do 2G Education phối hợp cùng Trung tâm
-          Văn hóa Doanh nghiệp – CORE tổ chức đã thành công rực rỡ!
+          Viện văn hóa Doanh nghiệp – CORE tổ chức đã thành công rực rỡ!
         </p>
         <Button
           className="mt-5 bg-red-600 text-white hover:bg-red-700"

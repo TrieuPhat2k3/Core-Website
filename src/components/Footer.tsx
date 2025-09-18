@@ -21,7 +21,7 @@ const Footer: React.FC = () => (
             CORE
           </div>
           <div className="text-sm mb-8 opacity-80 text-center md:text-left">
-            TRUNG TÂM VĂN HÓA DOANH NGHIỆP
+            VIỆN VĂN HÓA DOANH NGHIỆP
           </div>
           <div className="flex gap-6 mt-2 mb-2">
             <a
@@ -103,7 +103,7 @@ const Footer: React.FC = () => (
               <Mail className="h-5 w-5" /> core@dhv.edu.vn
             </li>
             <li className="flex items-center gap-3 md:gap-5">
-              <MapPin className="h-6 w-6" /> 194 Lê Đức Thọ, Phường An Nhơn, TP.
+              <MapPin className="h-6 w-6" /> 194 Đ. Lê Đức Thọ, P. 6, Gò Vấp, TP.HCM
               HCM
             </li>
           </ul>
