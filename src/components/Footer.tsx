@@ -104,7 +104,6 @@ const Footer: React.FC = () => (
             </li>
             <li className="flex items-center gap-3 md:gap-5">
               <MapPin className="h-6 w-6" /> 194 Đ. Lê Đức Thọ, P. 6, Gò Vấp, TP.HCM
-              HCM
             </li>
           </ul>
         </div>
