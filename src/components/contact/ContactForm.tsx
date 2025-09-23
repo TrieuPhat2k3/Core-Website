@@ -9,14 +9,16 @@ const ContactForm: React.FC = () => {
     subject: "",
     phone: "",
     province: "",
-    content: ""
+    content: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -28,14 +30,16 @@ const ContactForm: React.FC = () => {
 
   return (
     <div className="space-y-12">
-      {/* Contact Form Section */}
       <div className="bg-white rounded-lg shadow-sm p-8">
-        <h2 className="text-3xl font-bold text-blue-900 mb-8 text-center">Liên hệ</h2>
-        
+        <h2 className="text-3xl font-bold text-blue-900 mb-4 text-center">
+          Liên hệ
+        </h2>
+        <p className="text-center text-gray-600 mb-8">
+          Email: <span className="font-medium">core@dhv.edu.vn</span>
+        </p>
+
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Top Row - Two Columns */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left Column */}
             <div className="space-y-4">
               <div>
                 <input
@@ -71,8 +75,6 @@ const ContactForm: React.FC = () => {
                 />
               </div>
             </div>
-
-            {/* Right Column */}
             <div className="space-y-4">
               <div>
                 <input
@@ -98,8 +100,6 @@ const ContactForm: React.FC = () => {
               </div>
             </div>
           </div>
-
-          {/* Large Text Area */}
           <div>
             <textarea
               name="content"
@@ -111,8 +111,6 @@ const ContactForm: React.FC = () => {
               required
             />
           </div>
-
-          {/* Submit Button */}
           <div className="text-center">
             <button
               type="submit"
@@ -124,17 +122,18 @@ const ContactForm: React.FC = () => {
         </form>
       </div>
 
-      {/* Google Maps Section */}
       <div className="bg-white rounded-lg shadow-sm p-8">
-        <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Vị trí của chúng tôi</h3>
+        <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+          Vị trí của chúng tôi
+        </h3>
         <div className="flex justify-center">
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.75593178441!2d106.6603784!3d10.7532842!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ef6ca551517%3A0xc331bdcaa0992e4b!2zNzM2IE5ndXnhu4VuIFRyw6NpLCBQaMaw4budbmcgMTEsIFF14bqtbiA1LCBI4buTIENow60gTWluaCwgVmlldG5hbQ!5e0!3m2!1sen!2sus!4v1756636691729!5m2!1sen!2sus" 
-            width="600" 
-            height="450" 
-            style={{ border: 0 }} 
-            allowFullScreen 
-            loading="lazy" 
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.6630429293546!2d106.67832447504269!3d10.837077789315403!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3175295ca1e469f7%3A0x4950eeb6801501d3!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBIw7luZyBWxrDGoW5nIFRQLiBI4buTIENow60gTWluaCAoREhWKQ!5e0!3m2!1sen!2sus!4v1758621156071!5m2!1sen!2sus"
+            width="600"
+            height="450"
+            style={{ border: 0 }}
+            allowFullScreen
+            loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             className="rounded-lg w-full max-w-4xl"
           />

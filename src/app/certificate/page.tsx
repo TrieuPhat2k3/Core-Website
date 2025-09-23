@@ -4,12 +4,12 @@ import CertificateList from "../../components/certificate/CertificateList";
 import Container from "../../components/ui/Container";
 
 export default function CertificatePage() {
-    return (
-        <>
-            <HeroCertificate />
-            <Container className="py-12">
-                <CertificateList />
-            </Container>
-        </>
-    );
+  return (
+    <>
+      <HeroCertificate />
+      <Container className="py-12">
+        <CertificateList />
+      </Container>
+    </>
+  );
 }

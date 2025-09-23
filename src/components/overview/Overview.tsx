@@ -16,7 +16,7 @@ const Overview: React.FC = () => (
       </div>
       <div className="flex-1 flex justify-center">
         <Image
-          src="/assets/business.jpg"
+          src="/assets/overview.png"
           alt="Vision"
           width={320}
           height={320}

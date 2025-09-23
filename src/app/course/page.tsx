@@ -4,12 +4,12 @@ import CourseList from "../../components/course/CourseList";
 import Container from "../../components/ui/Container";
 
 export default function CoursePage() {
-    return (
-        <>
-            <HeroCourse />
-            <Container className="py-12">
-                <CourseList />
-            </Container>
-        </>
-    );
+  return (
+    <>
+      <HeroCourse />
+      <Container className="py-12">
+        <CourseList />
+      </Container>
+    </>
+  );
 }

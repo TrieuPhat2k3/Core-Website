@@ -12,7 +12,7 @@ const courses = [
     title: "Nghệ Thuật Đàm Phán Trong Kinh Doanh",
     summary: "Thông báo mở lớp khóa học \"Nghệ Thuật Đàm Phán Trong Kinh Doanh\"",
     status: "ĐANG MỞ LỚP",
-    statusColor: "border-gray-800 text-gray-800",
+    statusColor: "border-green-600 text-green-600",
     image: "window.svg",
     learningMethod: "Trực tiếp (offline)",
     openingDate: "03/07/2025",
@@ -25,7 +25,7 @@ const courses = [
     title: "Tên khóa học 2",
     summary: "Mô tả ngắn về tên khóa học",
     status: "ĐÃ KẾT THÚC",
-    statusColor: "border-gray-800 text-gray-800",
+    statusColor: "border-red-600 text-red-600",
     image: "window.svg",
     learningMethod: "Trực tuyến (online)",
     openingDate: "15/06/2025",
@@ -38,7 +38,7 @@ const courses = [
     title: "Tên khóa học 3",
     summary: "Mô tả ngắn về tên khóa học",
     status: "ĐANG MỞ LỚP",
-    statusColor: "border-gray-800 text-gray-800",
+    statusColor: "border-green-600 text-green-600",
     image: "window.svg",
     learningMethod: "Trực tiếp (offline)",
     openingDate: "20/07/2025",
@@ -120,9 +120,9 @@ const CourseList: React.FC = () => {
                 <div>
                   <h4 className="font-bold text-blue-900 leading-tight mb-1">{course.title}</h4>
                   <p className="text-sm text-gray-700 mb-3">{course.summary}</p>
-                  <button className={`px-4 py-2 border-2 rounded-lg font-medium transition-colors ${course.statusColor}`}>
+                  <span className={`px-2 py-1 border text-xs rounded-md font-medium transition-colors ${course.statusColor}`}>
                     {course.status}
-                  </button>
+                  </span>
                 </div>
               </div>
             </div>

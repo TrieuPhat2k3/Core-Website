@@ -15,8 +15,8 @@ const quickLinks = [
 const Footer: React.FC = () => (
   <footer className="bg-[#0E2453] text-white">
     <Container className="py-10 px-6 md:px-16">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between md:gap-24 gap-10">
-        <div className="flex-1 flex flex-col items-center md:items-start md:justify-center">
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between md:gap-24 gap-10">
+        <div className="flex-1 flex flex-col items-center md:items-start h-full">
           <div className="mb-6 text-5xl font-extrabold tracking-tight">
             CORE
           </div>
@@ -74,7 +74,7 @@ const Footer: React.FC = () => (
             </a>
           </div>
         </div>
-        <div className="flex-1 flex flex-col items-center md:items-center justify-center">
+        <div className="flex-1 flex flex-col items-center md:items-start h-full">
           <div className="mb-3 text-base font-bold uppercase tracking-wider opacity-90 text-left w-full">
             LIÊN KẾT NHANH
           </div>
@@ -91,7 +91,7 @@ const Footer: React.FC = () => (
             ))}
           </div>
         </div>
-        <div className="flex-1 flex flex-col items-center md:items-end justify-center">
+        <div className="flex-1 flex flex-col items-center md:items-start h-full">
           <div className="mb-3 text-base font-bold uppercase tracking-wider opacity-90 text-left w-full">
             LIÊN HỆ
           </div>
