@@ -25,13 +25,13 @@ const Footer: React.FC = () => (
           </div>
           <div className="flex gap-6 mt-2 mb-2">
             <a
-              href="#"
+              href="https://www.facebook.com/vvhdn.core"
               aria-label="Facebook"
               className="h-8 w-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20"
             >
               <span className="sr-only">Facebook</span>
               <img
-                src="/assets/facebook-icon.svg"
+                src="/assets/facebook-white.svg"
                 alt="Facebook"
                 className="h-6 w-6 object-contain"
               />
@@ -43,7 +43,7 @@ const Footer: React.FC = () => (
             >
               <span className="sr-only">TikTok</span>
               <img
-                src="/assets/tiktok-icon.svg"
+                src="/assets/tiktok-white.svg"
                 alt="TikTok"
                 className="h-6 w-6 object-contain"
               />
@@ -55,7 +55,7 @@ const Footer: React.FC = () => (
             >
               <span className="sr-only">YouTube</span>
               <img
-                src="/assets/youtube-icon.svg"
+                src="/assets/youtube-white.svg"
                 alt="YouTube"
                 className="h-6 w-6 object-contain"
               />
@@ -67,7 +67,7 @@ const Footer: React.FC = () => (
             >
               <span className="sr-only">Zalo</span>
               <img
-                src="/assets/zalo-icon.svg"
+                src="/assets/zalo-white.svg"
                 alt="Zalo"
                 className="h-6 w-6 object-contain"
               />
@@ -97,7 +97,7 @@ const Footer: React.FC = () => (
           </div>
           <ul className="space-y-2 text-base opacity-90">
             <li className="flex items-center gap-3 md:gap-5">
-              <Phone className="h-5 w-5" /> 0000 000 000
+              <Phone className="h-5 w-5" /> +84 287 1001 888 - ext: 216
             </li>
             <li className="flex items-center gap-3 md:gap-5">
               <Mail className="h-5 w-5" /> core@dhv.edu.vn

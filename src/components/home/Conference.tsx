@@ -27,7 +27,7 @@ const Conference: React.FC = () => (
       <div>
         <Image
           className="w-full rounded-2xl shadow-xl"
-          src="/assets/business.jpg"
+          src="/assets/conference.jpg"
           alt="Conference"
           width={600}
           height={400}

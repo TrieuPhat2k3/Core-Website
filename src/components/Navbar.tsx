@@ -52,7 +52,7 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <div className="border-b border-gray-200 bg-white relative z-[9999] pb-2">
+      <div className="border-b border-gray-200 bg-white relative z-20 pb-2">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-8 py-4 text-sm font-semibold text-slate-700">
             {NAV_ITEMS.map((item) => {

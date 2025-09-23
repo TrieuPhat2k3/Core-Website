@@ -9,9 +9,9 @@ const Overview: React.FC = () => (
           Tầm nhìn
         </h2>
         <p className="text-lg text-[#222] leading-relaxed">
-          Trở thành trung tâm hàng đầu về nghiên cứu, đào tạo và kết nối văn hóa
-          doanh nghiệp trong môi trường giáo dục, góp phần định hình thế hệ
-          doanh nhân sáng tạo, nhân văn và bền vững.
+          Trở thành Viện hàng đầu về nghiên cứu, đào tạo, kết nối văn hóa doanh
+          nghiệp trong môi trường giáo dục, góp phần định hình thế hệ doanh nhân
+          sáng tạo, nhân văn và bền vững.
         </p>
       </div>
       <div className="flex-1 flex justify-center">

@@ -6,7 +6,7 @@ const HeroCourse: React.FC = () => {
   return (
     <section className="relative bg-cover bg-center text-white min-h-[420px]">
       <Image
-        src="/assets/learning.png"
+        src="/assets/course-banner.jpg"
         alt="Hero"
         fill
         className="object-cover z-0"
