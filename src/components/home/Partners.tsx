@@ -1,9 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Container from "../ui/Container";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
+
+
+const partnerLogos = [
+  {
+    src: "/assets/GreenAcademy-logo.png",
+    alt: "Green Academy",
+  },
+  {
+    src: "/assets/MB-Bank-logo.png",
+    alt: "MB Bank",
+  },
+  {
+    src: "/assets/IAIB-logo.jpg",
+    alt: "IAIB",
+  },
+  {
+    src: "/assets/iSpace-logo.png",
+    alt: "iSpace",
+  },
+  {
+    src: "/assets/EasyEdu-logo.png",
+    alt: "EasyEdu",
+  },
+  {
+    src: "/assets/NewGym-logo.png",
+    alt: "NewGym",
+  },
+];
 
 const partnerPages = [
   [0, 1, 2, 3],
@@ -12,9 +41,17 @@ const partnerPages = [
 ];
 
 const Partners: React.FC = () => {
+
   const [page, setPage] = useState(0);
   const currentPartners = partnerPages[page];
   const totalPages = partnerPages.length;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPage((prev) => (prev === totalPages - 1 ? 0 : prev + 1));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [totalPages]);
 
   const handlePrev = () => {
     setPage((prev) => (prev === 0 ? totalPages - 1 : prev - 1));
@@ -38,14 +75,26 @@ const Partners: React.FC = () => {
             <ChevronLeft className="h-6 w-6 text-slate-700" />
           </button>
           <div className="mx-10 grid grid-cols-4 items-center gap-6">
-            {currentPartners.map((i) => (
-              <div
-                key={i}
-                className="flex h-16 items-center justify-center rounded-xl bg-slate-100"
-              >
-                <div className="h-8 w-8 rounded-full bg-slate-300" />
-              </div>
-            ))}
+            {currentPartners.map((i) => {
+              const logo = partnerLogos[i];
+              return (
+                <div
+                  key={i}
+                  className="flex h-16 items-center justify-center rounded-xl bg-slate-100"
+                >
+                  {logo ? (
+                    <img
+                      src={logo.src}
+                      alt={logo.alt}
+                      className="h-12 object-contain"
+                      style={{ maxWidth: "90%" }}
+                    />
+                  ) : (
+                    <div className="h-8 w-8 rounded-full bg-slate-300" />
+                  )}
+                </div>
+              );
+            })}
           </div>
           <button
             aria-label="Next"

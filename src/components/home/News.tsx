@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Container from "../ui/Container";
 import Button from "../ui/Button";
@@ -111,6 +111,13 @@ const newsPages = [
 const News: React.FC = () => {
   const [page, setPage] = useState(0);
   const currentNews = newsPages[page];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPage((prev) => (prev === newsPages.length - 1 ? 0 : prev + 1));
+    }, 5000); 
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section className="bg-[#EEF5FF] py-12">
