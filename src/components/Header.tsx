@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useRef, useEffect } from "react";
 import { Search, LogIn, X } from "lucide-react";
@@ -115,7 +115,7 @@ const Header: React.FC = () => {
     <div className="border-b bg-white">
       <Container className="flex h-14 items-center gap-4">
         <div className="flex items-center gap-2">
-          <a href="/home">
+          <a href="/public/home">
             <img
               src="/assets/home-logo.png"
               alt="CORE Logo"
@@ -125,7 +125,7 @@ const Header: React.FC = () => {
         </div>
         <div
           ref={searchRef}
-          className="mx-auto hidden w-full max-w-xl items-center rounded-full border bg-white px-4 py-2 shadow-sm sm:flex relative"
+          className="mx-auto hidden w-full max-w-xl items-center rounded-full bg-gray-100 px-4 py-2 shadow-lg sm:flex relative"
         >
           <Search className="mr-2 h-4 w-4 shrink-0 text-slate-400" />
           <input
@@ -157,7 +157,7 @@ const Header: React.FC = () => {
                       <div className="space-y-2">
                         {searchResults.events.map((event) => (
                           <Link
-                            href={`/event/${event.id}`}
+                            href={`/public/event/${event.id}`}
                             key={`event-${event.id}`}
                             onClick={() => setShowResults(false)}
                             className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-md"
@@ -191,7 +191,7 @@ const Header: React.FC = () => {
                       <div className="space-y-2">
                         {searchResults.courses.map((course) => (
                           <Link
-                            href={`/course/${course.id}`}
+                            href={`/public/course/${course.id}`}
                             key={`course-${course.id}`}
                             onClick={() => setShowResults(false)}
                             className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-md"
@@ -224,7 +224,7 @@ const Header: React.FC = () => {
         <div className="ml-auto flex items-center gap-2">
           <LogIn className="hidden h-4 w-4 text-red-600 sm:block" />
           <a
-            href="/login"
+            href="/public/login"
             className="text-sm font-medium text-blue-900 hover:text-red-600"
           >
             Đăng nhập

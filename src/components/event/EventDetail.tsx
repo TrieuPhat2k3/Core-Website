@@ -10,7 +10,8 @@ const events = [
     type: "Workshop",
     typeColor: "bg-red-600",
     title: "HỘI THẢO CHUYÊN ĐỀ IELTS & ESOL APTIS",
-    summary: "Chiều ngày 18/06/2025, tại Trường Đại học Hùng Vương TP.HCM, hội thảo do 2G Education phối hợp cùng Trung tâm Văn hóa Doanh nghiệp - CORE tổ chức đã diễn ra thành công rực rỡ!",
+    summary:
+      "Chiều ngày 18/06/2025, tại Trường Đại học Hùng Vương TP.HCM, hội thảo do 2G Education phối hợp cùng Trung tâm Văn hóa Doanh nghiệp - CORE tổ chức đã diễn ra thành công rực rỡ!",
     views: 1017,
     date: "18/06/2025",
     image: "/assets/event-example2.jpg",
@@ -23,18 +24,20 @@ const events = [
     `,
     speaker: {
       name: "Chị Lương Thị Mỹ Hạnh",
-      title: "Head of Academic at 2G Signature Campus, ACC (ICF) certified coach",
-      experience: "Hơn 10 năm kinh nghiệm trong việc thiết kế và phát triển các chương trình đào tạo",
-      image: "/assets/cutevent-example3.png"
+      title:
+        "Head of Academic at 2G Signature Campus, ACC (ICF) certified coach",
+      experience:
+        "Hơn 10 năm kinh nghiệm trong việc thiết kế và phát triển các chương trình đào tạo",
+      image: "/assets/cutevent-example3.png",
     },
     benefits: [
       "Hiểu rõ cấu trúc & sự khác biệt giữa IELTS và APTIS",
       "Nắm bắt chiến lược ôn luyện sát thực tế và dễ áp dụng",
       "Giải đáp trực tiếp thắc mắc cá nhân, định hướng lộ trình thi phù hợp",
-      "Nhận bộ tài liệu luyện thi chất lượng và những phần quà hấp dẫn từ BTC"
+      "Nhận bộ tài liệu luyện thi chất lượng và những phần quà hấp dẫn từ BTC",
     ],
     showContactInfo: true,
-    showCallToAction: true
+    showCallToAction: true,
   },
   {
     id: 2,
@@ -53,7 +56,7 @@ const events = [
     speaker: null,
     benefits: null,
     showContactInfo: false,
-    showCallToAction: false
+    showCallToAction: false,
   },
   {
     id: 3,
@@ -72,8 +75,8 @@ const events = [
     speaker: null,
     benefits: null,
     showContactInfo: false,
-    showCallToAction: false
-  }
+    showCallToAction: false,
+  },
 ];
 
 interface EventDetailProps {
@@ -83,9 +86,9 @@ interface EventDetailProps {
 const EventDetail: React.FC<EventDetailProps> = ({ id }) => {
   const [currentRelatedPage, setCurrentRelatedPage] = useState(1);
   const relatedEventsPerPage = 2;
-   
-  const event = events.find(e => e.id.toString() === id);
-   
+
+  const event = events.find((e) => e.id.toString() === id);
+
   if (!event) {
     return (
       <div className="bg-[#f8f9fa] rounded-lg p-8 max-w-4xl mx-auto mt-8 text-center text-red-600">
@@ -94,8 +97,10 @@ const EventDetail: React.FC<EventDetailProps> = ({ id }) => {
     );
   }
 
-  const relatedEvents = events.filter(e => e.id !== event.id);
-  const totalRelatedPages = Math.ceil(relatedEvents.length / relatedEventsPerPage);
+  const relatedEvents = events.filter((e) => e.id !== event.id);
+  const totalRelatedPages = Math.ceil(
+    relatedEvents.length / relatedEventsPerPage
+  );
   const currentRelatedEvents = relatedEvents.slice(
     (currentRelatedPage - 1) * relatedEventsPerPage,
     currentRelatedPage * relatedEventsPerPage
@@ -107,8 +112,18 @@ const EventDetail: React.FC<EventDetailProps> = ({ id }) => {
         <div className="flex gap-4">
           <div className="flex-1 relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg
+                className="h-5 w-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
             </div>
             <input
@@ -126,7 +141,9 @@ const EventDetail: React.FC<EventDetailProps> = ({ id }) => {
       <div className="bg-white rounded-lg shadow-sm p-8">
         <div className="mb-6">
           <div className="text-gray-600 mb-2">{event.date}</div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">{event.title}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            {event.title}
+          </h1>
         </div>
 
         <div className="mb-6">
@@ -188,14 +205,19 @@ const EventDetail: React.FC<EventDetailProps> = ({ id }) => {
         {event.showCallToAction && (
           <div className="mb-8 p-6 bg-blue-50 rounded-lg">
             <p className="text-gray-700 mb-4">
-              Cảm ơn 2G Education, các giảng viên và sinh viên đã tham gia hội thảo đầy cảm hứng và thiết thực này. 
-              Bạn có thể xem album ảnh sự kiện tại: 
-              <a href="https://www.facebook.com/share/p/1JkGuc6Sqt/" className="text-blue-600 hover:underline ml-1">
+              Cảm ơn 2G Education, các giảng viên và sinh viên đã tham gia hội
+              thảo đầy cảm hứng và thiết thực này. Bạn có thể xem album ảnh sự
+              kiện tại:
+              <a
+                href="https://www.facebook.com/share/p/1JkGuc6Sqt/"
+                className="text-blue-600 hover:underline ml-1"
+              >
                 https://www.facebook.com/share/p/1JkGuc6Sqt/
               </a>
             </p>
             <p className="text-gray-700">
-              Hãy theo dõi Fanpage Trung tâm Văn hóa Doanh nghiệp-CORE-DHV để cập nhật các chương trình học thuật và kỹ năng mới nhất!
+              Hãy theo dõi Fanpage Trung tâm Văn hóa Doanh nghiệp-CORE-DHV để
+              cập nhật các chương trình học thuật và kỹ năng mới nhất!
             </p>
           </div>
         )}
@@ -206,24 +228,39 @@ const EventDetail: React.FC<EventDetailProps> = ({ id }) => {
               Liên hệ Trung tâm Văn hóa Doanh Nghiệp – CORE:
             </h3>
             <div className="space-y-2 text-gray-700">
-              <p><strong>Địa chỉ:</strong> 736 Nguyễn Trãi, Phường 11, Quận 5, TP.HCM</p>
-              <p><strong>Email:</strong> core@dhv.edu.vn</p>
-              <p><strong>Hotline:</strong> 0934 827 742</p>
+              <p>
+                <strong>Địa chỉ:</strong> 736 Nguyễn Trãi, Phường 11, Quận 5,
+                TP.HCM
+              </p>
+              <p>
+                <strong>Email:</strong> core@dhv.edu.vn
+              </p>
+              <p>
+                <strong>Hotline:</strong> 0934 827 742
+              </p>
             </div>
           </div>
         )}
       </div>
 
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">Tin tức liên quan:</h3>
-        
+        <h3 className="text-xl font-bold text-gray-900 mb-4">
+          Tin tức liên quan:
+        </h3>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           {currentRelatedEvents.map((relatedEvent) => (
-            <Link href={`/event/${relatedEvent.id}`} key={relatedEvent.id} className="block">
+            <Link
+              href={`/event/${relatedEvent.id}`}
+              key={relatedEvent.id}
+              className="block"
+            >
               <div className="border rounded-lg p-4 hover:shadow-md transition">
                 <div className="w-full h-32 bg-gray-300 rounded-lg mb-3 relative">
                   <div className="absolute top-2 right-2">
-                    <span className={`px-2 py-1 rounded text-white text-xs font-bold ${relatedEvent.typeColor}`}>
+                    <span
+                      className={`px-2 py-1 rounded text-white text-xs font-bold ${relatedEvent.typeColor}`}
+                    >
                       {relatedEvent.type}
                     </span>
                   </div>
@@ -234,7 +271,9 @@ const EventDetail: React.FC<EventDetailProps> = ({ id }) => {
                     className="object-cover rounded-lg"
                   />
                 </div>
-                <h4 className="font-bold text-gray-900 mb-1">{relatedEvent.title}</h4>
+                <h4 className="font-bold text-gray-900 mb-1">
+                  {relatedEvent.title}
+                </h4>
                 <p className="text-sm text-gray-600">{relatedEvent.summary}</p>
               </div>
             </Link>
@@ -243,17 +282,17 @@ const EventDetail: React.FC<EventDetailProps> = ({ id }) => {
 
         {totalRelatedPages > 1 && (
           <div className="flex justify-center gap-2">
-            {Array.from({ length: totalRelatedPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentRelatedPage(page)}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  currentRelatedPage === page
-                    ? "bg-red-600"
-                    : "bg-blue-400"
-                }`}
-              />
-            ))}
+            {Array.from({ length: totalRelatedPages }, (_, i) => i + 1).map(
+              (page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentRelatedPage(page)}
+                  className={`w-3 h-3 rounded-full transition-colors ${
+                    currentRelatedPage === page ? "bg-red-600" : "bg-blue-400"
+                  }`}
+                />
+              )
+            )}
           </div>
         )}
       </div>

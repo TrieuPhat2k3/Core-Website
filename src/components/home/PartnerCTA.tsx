@@ -35,7 +35,7 @@ const PartnerHighlight: React.FC = () => (
               <br />
               THÔNG TIN CHƯƠNG TRÌNH
             </div>
-            <a href="/contact">
+            <a href="/public/register">
               <Button className="w-full rounded-xl bg-red-600 text-white font-bold hover:bg-red-700 py-3 text-base shadow-md">
                 ĐĂNG KÝ MIỄN PHÍ
               </Button>

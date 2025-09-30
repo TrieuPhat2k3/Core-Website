@@ -7,11 +7,11 @@ const Conference: React.FC = () => (
   <section className="bg-white py-12">
     <Container className="grid items-center gap-8 md:grid-cols-2">
       <div>
-        <h3 className="text-xl font-bold leading-tight text-blue-900">
+        <h3 className="text-2xl font-bold leading-tight text-blue-900">
           HỘI THẢO KHOA HỌC QUỐC TẾ VĂN HÓA VÀ CON NGƯỜI TRONG KỶ NGUYÊN VƯƠN
           MÌNH - HỘI NHẬP
         </h3>
-        <p className="mt-3 text-sm leading-6 text-slate-700">
+        <p className="mt-3 leading-6 text-slate-700">
           Trong chuỗi sự kiện chào mừng 30 năm thành lập Trường, Trường Đại học
           Hùng Vương TP.HCM, hội thảo do 2G Education phối hợp cùng Trung tâm
           Viện văn hóa Doanh nghiệp – CORE tổ chức đã thành công rực rỡ!
@@ -19,7 +19,7 @@ const Conference: React.FC = () => (
         <Button
           className="mt-5 bg-red-600 text-white hover:bg-red-700"
           as="a"
-          href="/conference"
+          href="/public/conference"
         >
           Xem thêm &gt;&gt;
         </Button>

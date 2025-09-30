@@ -3,13 +3,13 @@ import Container from "./ui/Container";
 import { Phone, Mail, MapPin } from "lucide-react";
 
 const quickLinks = [
-  { label: "Trang chủ", href: "/home" },
-  { label: "Giới thiệu", href: "/overview" },
-  { label: "Hội thảo", href: "/conference" },
-  { label: "Sự kiện", href: "/event" },
-  { label: "Khóa học", href: "/course" },
-  { label: "Liên Hệ", href: "/contact" },
-  { label: "Chính sách & Điều khoản", href: "/policy" },
+  { label: "Trang chủ", href: "/public/home" },
+  { label: "Giới thiệu", href: "/public/overview" },
+  { label: "Hội thảo", href: "/public/conference" },
+  { label: "Sự kiện", href: "/public/event" },
+  { label: "Khóa học", href: "/public/course" },
+  { label: "Liên Hệ", href: "/public/contact" },
+  { label: "Chính sách & Điều khoản", href: "/public/policy" },
 ];
 
 const Footer: React.FC = () => (
@@ -17,8 +17,8 @@ const Footer: React.FC = () => (
     <Container className="py-10 px-6 md:px-16">
       <div className="flex flex-col md:flex-row md:items-start md:justify-between md:gap-24 gap-10">
         <div className="flex-1 flex flex-col items-center md:items-start h-full">
-          <div className="mb-6 text-5xl font-extrabold tracking-tight">
-            CORE
+          <div className="mb-6">
+            <img src="/assets/icc-logo.png" alt="CORE Logo" className="h-16 w-auto object-contain" />
           </div>
           <div className="text-sm mb-8 opacity-80 text-center md:text-left">
             VIỆN VĂN HÓA DOANH NGHIỆP
@@ -97,13 +97,14 @@ const Footer: React.FC = () => (
           </div>
           <ul className="space-y-2 text-base opacity-90">
             <li className="flex items-center gap-3 md:gap-5">
-              <Phone className="h-5 w-5" /> +84 287 1001 888 - ext: 216
+              <Phone className="h-5 w-5" /> (+84) 287 1001 888 - ext: 216
             </li>
             <li className="flex items-center gap-3 md:gap-5">
               <Mail className="h-5 w-5" /> core@dhv.edu.vn
             </li>
             <li className="flex items-center gap-3 md:gap-5">
-              <MapPin className="h-6 w-6" /> 194 Đ. Lê Đức Thọ, P. 6, Gò Vấp, TP.HCM
+              <MapPin className="h-6 w-6" /> 194 Đ. Lê Đức Thọ, P. 6, Gò Vấp,
+              TP.HCM
             </li>
           </ul>
         </div>

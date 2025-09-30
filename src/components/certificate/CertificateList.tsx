@@ -11,6 +11,7 @@ const certificates = [
     courseName: "Nghệ Thuật Đàm Phán Trong Kinh Doanh",
     studentName: "Đỗ Lê Phúc Hưng Thịnh",
     issueDate: "30/08/2025",
+    date: "2025-08-30",
     status: "Đã cấp",
     statusColor: "bg-green-600",
     image: "/assets/certificate.png",
@@ -21,6 +22,7 @@ const certificates = [
     courseName: "Kỹ năng giao tiếp hiệu quả",
     studentName: "Nguyễn Thị Minh Anh",
     issueDate: "25/08/2025",
+    date: "2025-08-25",
     status: "Đã cấp",
     statusColor: "bg-green-600",
     image: "/assets/certificate.png",
@@ -31,6 +33,7 @@ const certificates = [
     courseName: "Quản lý dự án cơ bản",
     studentName: "Trần Văn Hoàng",
     issueDate: "20/08/2025",
+    date: "2025-08-20",
     status: "Đã cấp",
     statusColor: "bg-green-600",
     image: "/assets/certificate.png",
@@ -40,7 +43,9 @@ const certificates = [
 const CertificateList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredCertificates = certificates.filter(
+  const sortedCertificates = [...certificates].sort((a, b) => (b.date > a.date ? 1 : b.date < a.date ? -1 : 0));
+
+  const filteredCertificates = sortedCertificates.filter(
     (certificate) =>
       certificate.courseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       certificate.studentName
@@ -98,7 +103,7 @@ const CertificateList: React.FC = () => {
       <div className="space-y-6">
         {filteredCertificates.map((certificate) => (
           <Link
-            href={`/certificate/${certificate.id}`}
+            href={`/public/certificate/${certificate.id}`}
             key={certificate.id}
             className="block"
           >

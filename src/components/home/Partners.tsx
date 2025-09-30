@@ -3,9 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Container from "../ui/Container";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
-
-
 
 const partnerLogos = [
   {
@@ -41,10 +38,11 @@ const partnerPages = [
 ];
 
 const Partners: React.FC = () => {
-
   const [page, setPage] = useState(0);
-  const currentPartners = partnerPages[page];
-  const totalPages = partnerPages.length;
+  const validPartnerLogos = partnerLogos.filter(logo => logo.src && logo.alt);
+  const pageSize = 4;
+  const totalPages = Math.ceil(validPartnerLogos.length / pageSize);
+  const currentPartners = validPartnerLogos.slice(page * pageSize, page * pageSize + pageSize);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -75,26 +73,19 @@ const Partners: React.FC = () => {
             <ChevronLeft className="h-6 w-6 text-slate-700" />
           </button>
           <div className="mx-10 grid grid-cols-4 items-center gap-6">
-            {currentPartners.map((i) => {
-              const logo = partnerLogos[i];
-              return (
-                <div
-                  key={i}
-                  className="flex h-16 items-center justify-center rounded-xl bg-slate-100"
-                >
-                  {logo ? (
-                    <img
-                      src={logo.src}
-                      alt={logo.alt}
-                      className="h-12 object-contain"
-                      style={{ maxWidth: "90%" }}
-                    />
-                  ) : (
-                    <div className="h-8 w-8 rounded-full bg-slate-300" />
-                  )}
-                </div>
-              );
-            })}
+            {currentPartners.map((logo, idx) => (
+              <div
+                key={logo.src + logo.alt}
+                className="flex h-16 items-center justify-center rounded-xl bg-slate-100"
+              >
+                <img
+                  src={logo.src}
+                  alt={logo.alt}
+                  className="h-12 object-contain"
+                  style={{ maxWidth: "90%" }}
+                />
+              </div>
+            ))}
           </div>
           <button
             aria-label="Next"

@@ -9,7 +9,7 @@ const courses = [
     type: "Doanh nghiệp",
     typeColor: "bg-red-600",
     title: "Nghệ Thuật Đàm Phán Trong Kinh Doanh",
-    summary: "Thông báo mở lớp khóa học \"Nghệ Thuật Đàm Phán Trong Kinh Doanh\"",
+    summary: 'Thông báo mở lớp khóa học "Nghệ Thuật Đàm Phán Trong Kinh Doanh"',
     status: "ĐANG MỞ LỚP",
     statusColor: "bg-blue-600",
     image: "/assets/business.jpg",
@@ -27,8 +27,8 @@ const courses = [
       "Đối tượng: Nhân viên kinh doanh, quản lý, sinh viên",
       "Thời gian học: 8 buổi (2 buổi/tuần)",
       "Học phí: Liên hệ để biết thêm chi tiết",
-      "Địa điểm: Trung tâm Văn hóa Doanh nghiệp - CORE"
-    ]
+      "Địa điểm: Trung tâm Văn hóa Doanh nghiệp - CORE",
+    ],
   },
   {
     id: 2,
@@ -53,8 +53,8 @@ const courses = [
       "Đối tượng: Tất cả đối tượng quan tâm",
       "Thời gian học: 6 buổi (2 buổi/tuần)",
       "Học phí: Đã hoàn thành",
-      "Địa điểm: Học trực tuyến"
-    ]
+      "Địa điểm: Học trực tuyến",
+    ],
   },
   {
     id: 3,
@@ -79,9 +79,9 @@ const courses = [
       "Đối tượng: Sinh viên, người đi làm",
       "Thời gian học: 10 buổi (2 buổi/tuần)",
       "Học phí: Liên hệ để biết thêm chi tiết",
-      "Địa điểm: Trung tâm Văn hóa Doanh nghiệp - CORE"
-    ]
-  }
+      "Địa điểm: Trung tâm Văn hóa Doanh nghiệp - CORE",
+    ],
+  },
 ];
 
 interface CourseDetailProps {
@@ -89,8 +89,8 @@ interface CourseDetailProps {
 }
 
 const CourseDetail: React.FC<CourseDetailProps> = ({ id }) => {
-  const course = courses.find(c => c.id.toString() === id);
-   
+  const course = courses.find((c) => c.id.toString() === id);
+
   if (!course) {
     return (
       <div className="bg-[#f8f9fa] rounded-lg p-8 max-w-4xl mx-auto mt-8 text-center text-red-600">
@@ -105,8 +105,18 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ id }) => {
         <div className="flex gap-4">
           <div className="flex-1 relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg
+                className="h-5 w-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
             </div>
             <input
@@ -123,26 +133,57 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ id }) => {
 
       <div className="bg-white rounded-lg shadow-sm p-8">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">{course.title}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            {course.title}
+          </h1>
           <div className="flex items-center gap-3 mb-4">
-            <span className={`px-3 py-1 rounded-full text-white text-sm font-bold ${course.typeColor}`}>
+            <span
+              className={`px-3 py-1 rounded-full text-white text-sm font-bold ${course.typeColor}`}
+            >
               {course.type}
             </span>
-            <span className={`px-3 py-1 rounded-full text-white text-sm font-bold ${course.statusColor}`}>
+            <span
+              className={`px-3 py-1 rounded-full text-white text-sm font-bold ${course.statusColor}`}
+            >
               {course.status}
             </span>
           </div>
           <div className="text-xs text-gray-400 flex items-center gap-4">
             <span className="flex items-center gap-1">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
               </svg>
               {course.views} views
             </span>
             <span className="flex items-center gap-1">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v16a2 2 0 002 2z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v16a2 2 0 002 2z"
+                />
               </svg>
               {course.openingDate}
             </span>

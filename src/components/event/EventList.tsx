@@ -12,7 +12,7 @@ const events = [
     title: "HỘI THẢO CHUYÊN ĐỀ IELTS & ESOL APTIS",
     summary: "Chiều ngày 18/06/2025, tại Trường Đại học Hùng Vương TP.HCM, hội thảo do 2G Education phối hợp cùng Trung tâm Văn hóa Doanh nghiệp - CORE tổ chức đã diễn ra thành công rực rỡ!",
     views: 1017,
-    date: "18/06/2025",
+  date: "2025-06-18",
     image: "/assets/event-example2.jpg",
   },
   {
@@ -22,7 +22,7 @@ const events = [
     title: "TÊN SỰ KIỆN",
     summary: "Mô tả ngắn về sự kiện...",
     views: 0,
-    date: "/.../...",
+  date: "2025-06-01",
     image: "window.svg",
   },
   {
@@ -32,7 +32,7 @@ const events = [
     title: "TÊN SỰ KIỆN",
     summary: "Mô tả ngắn về sự kiện...",
     views: 0,
-    date: "/.../...",
+  date: "2025-05-01",
     image: "window.svg",
   },
   {
@@ -42,7 +42,7 @@ const events = [
     title: "TÊN SỰ KIỆN",
     summary: "Mô tả ngắn về sự kiện...",
     views: 0,
-    date: "/.../...",
+  date: "2025-04-01",
     image: "window.svg",
   },
 ];
@@ -52,7 +52,10 @@ const EventList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 4;
 
-  const filteredEvents = events.filter(event =>
+  // Sort events by date descending (most recent first)
+  const sortedEvents = [...events].sort((a, b) => (b.date > a.date ? 1 : b.date < a.date ? -1 : 0));
+
+  const filteredEvents = sortedEvents.filter(event =>
     event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     event.summary.toLowerCase().includes(searchTerm.toLowerCase()) ||
     event.type.toLowerCase().includes(searchTerm.toLowerCase())
@@ -97,7 +100,7 @@ const EventList: React.FC = () => {
       </div>
       <div className="space-y-6">
         {currentEvents.map((event) => (
-          <Link href={`/event/${event.id}`} key={event.id} className="block">
+          <Link href={`/public/event/${event.id}`} key={event.id} className="block">
             <div className="flex bg-white rounded-lg shadow-sm p-4 gap-6 hover:shadow-md transition">
               <div className="flex-shrink-0 w-32 h-32 bg-gray-200 rounded-lg overflow-hidden">
                 <Image 

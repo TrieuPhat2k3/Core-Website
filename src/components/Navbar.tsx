@@ -3,19 +3,19 @@ import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
-  { label: "Trang chủ", href: "/home" },
-  { label: "Giới thiệu", href: "/overview" },
-  { label: "Hội thảo", href: "/conference" },
-  { label: "Sự kiện", href: "/event" },
+  { label: "Trang chủ", href: "/public/home" },
+  { label: "Giới thiệu", href: "/public/overview" },
+  { label: "Hội thảo", href: "/public/conference" },
+  { label: "Sự kiện", href: "/public/event" },
   {
     label: "Khóa học",
-    href: "/course",
+    href: "/public/course",
     dropdown: [
-      { label: "Khóa học ngắn hạn", href: "/course" },
-      { label: "Tra cứu giấy Chứng nhận", href: "/certificate" }
-    ]
+      { label: "Khóa học ngắn hạn", href: "/public/course" },
+      { label: "Tra cứu giấy Chứng nhận", href: "/public/certificate" },
+    ],
   },
-  { label: "Liên hệ", href: "/contact" }
+  { label: "Liên hệ", href: "/public/contact" },
 ];
 
 const Navbar: React.FC = () => {
@@ -24,12 +24,15 @@ const Navbar: React.FC = () => {
   const [dropdownPosition, setDropdownPosition] = useState({ left: 0, top: 0 });
   const [isHoveringDropdown, setIsHoveringDropdown] = useState(false);
 
-  const handleMouseEnter = (item: typeof NAV_ITEMS[0], event: React.MouseEvent) => {
+  const handleMouseEnter = (
+    item: (typeof NAV_ITEMS)[0],
+    event: React.MouseEvent
+  ) => {
     if (item.dropdown && item.dropdown.length > 0) {
       const rect = event.currentTarget.getBoundingClientRect();
       setDropdownPosition({
         left: rect.left,
-        top: rect.bottom + 8
+        top: rect.bottom + 8,
       });
       setActiveDropdown(item.label);
     }
@@ -56,8 +59,10 @@ const Navbar: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-8 py-4 text-sm font-semibold text-slate-700">
             {NAV_ITEMS.map((item) => {
-              const isActive = pathname === item.href ||
-                             (item.dropdown && item.dropdown.some(d => d.href === pathname));
+              const isActive =
+                pathname === item.href ||
+                (item.dropdown &&
+                  item.dropdown.some((d) => d.href === pathname));
               const hasDropdown = item.dropdown && item.dropdown.length > 0;
 
               return (
@@ -83,16 +88,18 @@ const Navbar: React.FC = () => {
       </div>
 
       {activeDropdown && (
-        <div 
+        <div
           className="fixed w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]"
           style={{
             left: `${dropdownPosition.left}px`,
-            top: `${dropdownPosition.top}px`
+            top: `${dropdownPosition.top}px`,
           }}
           onMouseEnter={handleDropdownMouseEnter}
           onMouseLeave={handleDropdownMouseLeave}
         >
-          {NAV_ITEMS.find(item => item.label === activeDropdown)?.dropdown?.map((dropdownItem) => {
+          {NAV_ITEMS.find(
+            (item) => item.label === activeDropdown
+          )?.dropdown?.map((dropdownItem) => {
             const isDropdownActive = pathname === dropdownItem.href;
             return (
               <a
