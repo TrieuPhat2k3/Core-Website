@@ -184,7 +184,7 @@ export default function AdminLayout({
             <div className="flex items-center ml-auto">
               <div className="mr-4 text-sm text-gray-600">Admin</div>
               <Link
-                href="/main/home"
+                href="/public/home"
                 className="p-1 rounded-full hover:bg-gray-100"
                 title="Về trang chủ"
               >
@@ -203,7 +203,7 @@ export default function AdminLayout({
                 </svg>
               </Link>
               <Link
-                href="/main/login"
+                href="/public/login"
                 className="p-1 ml-2 rounded-full hover:bg-gray-100"
                 title="Đăng xuất"
               >
