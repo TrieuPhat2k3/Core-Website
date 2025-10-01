@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import * as certificateApi from "@/api/certificates";
 import {
   Plus,
   Search,
@@ -15,7 +16,8 @@ import {
   Image,
 } from "lucide-react";
 
-interface Certificate {
+// UI Certificate type (keep for form and UI logic)
+interface UICertificate {
   id: string;
   recipientName: string;
   recipientEmail: string;
@@ -37,7 +39,6 @@ interface Certificate {
   verificationCode: string;
   downloadCount: number;
   lastDownloaded?: string;
-  // Vietnamese specific fields
   studentBirthDate?: string;
   serialNumber?: string;
   registryNumber?: string;
@@ -46,97 +47,83 @@ interface Certificate {
   studyDuration?: string;
 }
 
-const mockCertificates: Certificate[] = [
-  {
-    id: "1",
-    recipientName: "Nguyễn Văn An",
-    recipientEmail: "nguyen.van.an@email.com",
-    certificateType: "course",
-    title: "Chứng chỉ Phát triển React Nâng cao",
-    description: "Chứng chỉ hoàn thành khóa học Phát triển React Nâng cao",
-    issueDate: "2024-01-15",
-    expiryDate: "2026-01-15",
-    certificateNumber: "CERT-2024-001",
-    templateId: "template-course-1",
-    status: "issued",
-    courseName: "Phát triển React Nâng cao",
-    instructorName: "TS. Nguyễn Thị Hoa",
-    completionDate: "2024-01-10",
-    grade: "Giỏi",
-    creditsEarned: 3,
-    verificationCode: "VER-ABC123",
-    downloadCount: 5,
-    lastDownloaded: "2024-01-20",
-    studentBirthDate: "1995-05-15",
-    serialNumber: "SH-001",
-    registryNumber: "SVS-001",
-    studyDuration: "3 tháng",
-  },
-  {
-    id: "2",
-    recipientName: "Trần Thị Bình",
-    recipientEmail: "tran.thi.binh@email.com",
-    certificateType: "event",
-    title: "Hội thảo Đổi mới Công nghệ 2024",
-    description: "Chứng nhận tham dự Hội thảo Đổi mới Công nghệ",
-    issueDate: "2024-02-01",
-    certificateNumber: "CERT-2024-002",
-    templateId: "template-event-1",
-    status: "issued",
-    eventName: "Hội thảo Đổi mới Công nghệ 2024",
-    instructorName: "Ban Tổ chức",
-    completionDate: "2024-01-30",
-    verificationCode: "VER-DEF456",
-    downloadCount: 2,
-    lastDownloaded: "2024-02-05",
-    studentBirthDate: "1992-08-20",
-    serialNumber: "SH-002",
-    registryNumber: "SVS-002",
-  },
-  {
-    id: "3",
-    recipientName: "Lê Văn Cường",
-    recipientEmail: "le.van.cuong@email.com",
-    certificateType: "conference",
-    title: "Hội nghị AI & Machine Learning",
-    description: "Chứng nhận tham gia Hội nghị AI & ML",
-    issueDate: "2024-01-25",
-    certificateNumber: "CERT-2024-003",
-    templateId: "template-conference-1",
-    status: "pending",
-    conferenceName: "Hội nghị AI & Machine Learning",
-    instructorName: "Ủy ban Hội nghị",
-    completionDate: "2024-01-22",
-    verificationCode: "VER-GHI789",
-    downloadCount: 0,
-    studentBirthDate: "1990-12-10",
-    serialNumber: "SH-003",
-    registryNumber: "SVS-003",
-  },
-];
+
 
 export default function CertificateManagement() {
-  const [certificates, setCertificates] =
-    useState<Certificate[]>(mockCertificates);
+  const [certificates, setCertificates] = useState<UICertificate[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Map API Certificate to UI Certificate (expand as needed)
+  function apiToUICertificate(apiCert: certificateApi.Certificate): UICertificate {
+    return {
+      id: apiCert.id.toString(),
+      recipientName: apiCert.issuedTo,
+      recipientEmail: "", // Not in API
+      certificateType: "course", // Not in API
+      title: apiCert.name,
+      description: "", // Not in API
+      issueDate: apiCert.issuedAt,
+      expiryDate: "",
+      certificateNumber: "", // Not in API
+      templateId: "", // Not in API
+      status: "issued",
+      courseName: "",
+      eventName: "",
+      conferenceName: "",
+      instructorName: "",
+      completionDate: apiCert.issuedAt,
+      grade: "",
+      creditsEarned: undefined,
+      verificationCode: "",
+      downloadCount: 0,
+      lastDownloaded: "",
+      studentBirthDate: "",
+      serialNumber: "",
+      registryNumber: "",
+      frontImage: apiCert.image,
+      backImage: "",
+      studyDuration: "",
+    };
+  }
+
+  // Map UI Certificate to API Certificate (for add/edit)
+  function uiToApiCertificate(uiCert: UICertificate): Omit<certificateApi.Certificate, "id"> {
+    return {
+      name: uiCert.title,
+      issuedTo: uiCert.recipientName,
+      issuedAt: uiCert.issueDate,
+      image: uiCert.frontImage || "",
+    };
+  }
+
+  useEffect(() => {
+    async function fetchCertificates() {
+      setLoading(true);
+      const data = await certificateApi.getCertificates();
+      setCertificates(data.map(apiToUICertificate));
+      setLoading(false);
+    }
+    fetchCertificates();
+  }, []);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [showModal, setShowModal] = useState(false);
   const [editingCertificate, setEditingCertificate] =
-    useState<Certificate | null>(null);
+    useState<UICertificate | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
   const [formData, setFormData] = useState({
     recipientName: "",
     recipientEmail: "",
-    certificateType: "course" as Certificate["certificateType"],
+    certificateType: "course" as UICertificate["certificateType"],
     title: "",
     description: "",
     issueDate: "",
     expiryDate: "",
     certificateNumber: "",
     templateId: "",
-    status: "pending" as Certificate["status"],
+    status: "pending" as UICertificate["status"],
     courseName: "",
     eventName: "",
     conferenceName: "",
@@ -166,34 +153,26 @@ export default function CertificateManagement() {
     return matchesSearch && matchesType && matchesStatus;
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (editingCertificate) {
-      setCertificates(
-        certificates.map((cert) =>
-          cert.id === editingCertificate.id
-            ? {
-                ...cert,
-                ...formData,
-                creditsEarned: formData.creditsEarned || undefined,
-              }
-            : cert
-        )
+      // Edit
+      const updated = await certificateApi.editCertificate(
+        Number(editingCertificate.id),
+        uiToApiCertificate({ ...editingCertificate, ...formData })
       );
+      if (updated) {
+        setCertificates((prev) =>
+          prev.map((cert) =>
+            cert.id === editingCertificate.id ? apiToUICertificate(updated) : cert
+          )
+        );
+      }
     } else {
-      const newCertificate: Certificate = {
-        id: Date.now().toString(),
-        ...formData,
-        creditsEarned: formData.creditsEarned || undefined,
-        downloadCount: 0,
-        verificationCode:
-          formData.verificationCode ||
-          `VER-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
-      };
-      setCertificates([...certificates, newCertificate]);
+      // Add
+      const newCert = await certificateApi.addCertificate(uiToApiCertificate(formData as UICertificate));
+      setCertificates((prev) => [...prev, apiToUICertificate(newCert)]);
     }
-
     resetForm();
   };
 
@@ -228,7 +207,7 @@ export default function CertificateManagement() {
     setShowModal(false);
   };
 
-  const handleEdit = (certificate: Certificate) => {
+  const handleEdit = (certificate: UICertificate) => {
     setEditingCertificate(certificate);
     setFormData({
       recipientName: certificate.recipientName,
@@ -259,9 +238,10 @@ export default function CertificateManagement() {
     setShowModal(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm("Bạn có chắc chắn muốn xóa chứng chỉ này?")) {
-      setCertificates(certificates.filter((cert) => cert.id !== id));
+      await certificateApi.deleteCertificate(Number(id));
+      setCertificates((prev) => prev.filter((cert) => cert.id !== id));
     }
   };
 
@@ -285,7 +265,7 @@ export default function CertificateManagement() {
     );
   };
 
-  const getStatusColor = (status: Certificate["status"]) => {
+  const getStatusColor = (status: UICertificate["status"]) => {
     switch (status) {
       case "issued":
         return "bg-green-100 text-green-800";
@@ -300,7 +280,7 @@ export default function CertificateManagement() {
     }
   };
 
-  const getTypeColor = (type: Certificate["certificateType"]) => {
+  const getTypeColor = (type: UICertificate["certificateType"]) => {
     switch (type) {
       case "course":
         return "bg-blue-100 text-blue-800";
@@ -315,7 +295,7 @@ export default function CertificateManagement() {
     }
   };
 
-  const getStatusText = (status: Certificate["status"]) => {
+  const getStatusText = (status: UICertificate["status"]) => {
     switch (status) {
       case "issued":
         return "Đã cấp";
@@ -330,7 +310,7 @@ export default function CertificateManagement() {
     }
   };
 
-  const getTypeText = (type: Certificate["certificateType"]) => {
+  const getTypeText = (type: UICertificate["certificateType"]) => {
     switch (type) {
       case "course":
         return "Khóa học";
@@ -693,7 +673,7 @@ export default function CertificateManagement() {
                             setFormData({
                               ...formData,
                               certificateType: e.target
-                                .value as Certificate["certificateType"],
+                                .value as UICertificate["certificateType"],
                             })
                           }
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -850,7 +830,7 @@ export default function CertificateManagement() {
                             onChange={(e) =>
                               setFormData({
                                 ...formData,
-                                status: e.target.value as Certificate["status"],
+                                status: e.target.value as UICertificate["status"],
                               })
                             }
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"

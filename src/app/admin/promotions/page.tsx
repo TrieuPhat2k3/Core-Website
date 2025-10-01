@@ -1,30 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { getPromotions, editPromotion, Promotion } from "@/api/promotions";
 
-interface Promotion {
-  title: string;
-  subtitle: string;
-  description: string;
-  image: string;
-  registrationLink: string;
-  buttonText: string;
-}
-
-const initialPromotion: Promotion = {
-  title: "GREEN ACADEMY",
-  subtitle: "ĐỐI TÁC THỰC TẬP CHIẾN LƯỢC CỦA TRUNG TÂM VĂN HÓA DOANH NGHIỆP",
-  description:
-    "Green Academy đồng hành cùng sinh viên DHV mang đến cơ hội thực tập chất lượng cao và định hướng nghề nghiệp vững chắc.",
-  image: "/assets/student.png",
-  registrationLink: "/public/register",
-  buttonText: "ĐĂNG KÝ MIỄN PHÍ",
-};
-
-export default function PromotionManagement() {
-  const [promotion, setPromotion] = useState<Promotion>(initialPromotion);
+export default function PromotionsPage() {
+  const [promotion, setPromotion] = useState<Promotion | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState(initialPromotion);
+  const [formData, setFormData] = useState<Promotion | null>(null);
+
+  // Load promotion on mount (assume only one main promotion for now)
+  useEffect(() => {
+    (async () => {
+      const data = await getPromotions();
+      setPromotion(data[0] || null);
+      setFormData(data[0] || null);
+    })();
+  }, []);
 
   const openModal = () => {
     setFormData(promotion);
@@ -34,11 +25,15 @@ export default function PromotionManagement() {
     setIsModalOpen(false);
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (!formData) return;
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setPromotion(formData);
+    if (!formData || !promotion) return;
+    const updated = await editPromotion(promotion.id, formData);
+    setPromotion(updated || formData);
+    setFormData(updated || formData);
     closeModal();
   };
 
@@ -57,44 +52,46 @@ export default function PromotionManagement() {
         </button>
       </div>
       <div className="bg-white shadow overflow-hidden rounded-lg p-6">
-        <section className="relative overflow-hidden bg-[#F4F8FF] py-10">
-          <div className="relative grid items-center gap-8 md:grid-cols-2 z-10">
-            <div className="order-1 md:order-2 flex items-center justify-center">
-              <img
-                className="mx-auto w-full max-w-lg rounded-2xl object-cover"
-                src={promotion.image}
-                alt="Students"
-                width={400}
-                height={300}
-              />
-            </div>
-            <div className="order-2 md:order-1 flex flex-col items-start justify-center">
-              <div className="mb-4 flex items-center gap-3">
-                <span className="text-2xl font-extrabold text-blue-700">
-                  {promotion.title}
-                </span>
+        {promotion && (
+          <section className="relative overflow-hidden bg-[#F4F8FF] py-10">
+            <div className="relative grid items-center gap-8 md:grid-cols-2 z-10">
+              <div className="order-1 md:order-2 flex items-center justify-center">
+                <img
+                  className="mx-auto w-full max-w-lg rounded-2xl object-cover"
+                  src={promotion.image}
+                  alt="Students"
+                  width={400}
+                  height={300}
+                />
               </div>
-              <h4 className="mb-2 text-lg font-bold text-blue-900 leading-tight">
-                {promotion.subtitle}
-              </h4>
-              <p className="mb-6 text-base text-[#1E2952]">
-                {promotion.description}
-              </p>
-              <div className="flex w-full justify-center">
-                <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center w-full max-w-sm">
-                  <div className="text-center font-bold text-xl text-blue-900 mb-4">
-                    ĐĂNG KÝ NHẬN<br />THÔNG TIN CHƯƠNG TRÌNH
+              <div className="order-2 md:order-1 flex flex-col items-start justify-center">
+                <div className="mb-4 flex items-center gap-3">
+                  <span className="text-2xl font-extrabold text-blue-700">
+                    {promotion.title}
+                  </span>
+                </div>
+                <h4 className="mb-2 text-lg font-bold text-blue-900 leading-tight">
+                  {promotion.subtitle}
+                </h4>
+                <p className="mb-6 text-base text-[#1E2952]">
+                  {promotion.description}
+                </p>
+                <div className="flex w-full justify-center">
+                  <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center w-full max-w-sm">
+                    <div className="text-center font-bold text-xl text-blue-900 mb-4">
+                      ĐĂNG KÝ NHẬN<br />THÔNG TIN CHƯƠNG TRÌNH
+                    </div>
+                    <a href={promotion.registrationLink}>
+                      <button className="w-full rounded-xl bg-red-600 text-white font-bold hover:bg-red-700 py-3 text-base shadow-md">
+                        {promotion.buttonText}
+                      </button>
+                    </a>
                   </div>
-                  <a href={promotion.registrationLink}>
-                    <button className="w-full rounded-xl bg-red-600 text-white font-bold hover:bg-red-700 py-3 text-base shadow-md">
-                      {promotion.buttonText}
-                    </button>
-                  </a>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </div>
       {/* Modal Edit */}
       {isModalOpen && (
@@ -117,8 +114,8 @@ export default function PromotionManagement() {
                         type="text"
                         name="title"
                         id="title"
-                        value={formData.title}
-                        onChange={handleChange}
+                        value={formData?.title || ""}
+                        onChange={formData ? handleChange : undefined}
                         required
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
@@ -129,8 +126,8 @@ export default function PromotionManagement() {
                         type="text"
                         name="subtitle"
                         id="subtitle"
-                        value={formData.subtitle}
-                        onChange={handleChange}
+                        value={formData?.subtitle || ""}
+                        onChange={formData ? handleChange : undefined}
                         required
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
@@ -141,8 +138,8 @@ export default function PromotionManagement() {
                         name="description"
                         id="description"
                         rows={3}
-                        value={formData.description}
-                        onChange={handleChange}
+                        value={formData?.description || ""}
+                        onChange={formData ? handleChange : undefined}
                         required
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
@@ -153,8 +150,8 @@ export default function PromotionManagement() {
                         type="text"
                         name="image"
                         id="image"
-                        value={formData.image}
-                        onChange={handleChange}
+                        value={formData?.image || ""}
+                        onChange={formData ? handleChange : undefined}
                         required
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
@@ -165,8 +162,8 @@ export default function PromotionManagement() {
                         type="text"
                         name="registrationLink"
                         id="registrationLink"
-                        value={formData.registrationLink}
-                        onChange={handleChange}
+                        value={formData?.registrationLink || ""}
+                        onChange={formData ? handleChange : undefined}
                         required
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
@@ -177,8 +174,8 @@ export default function PromotionManagement() {
                         type="text"
                         name="buttonText"
                         id="buttonText"
-                        value={formData.buttonText}
-                        onChange={handleChange}
+                        value={formData?.buttonText || ""}
+                        onChange={formData ? handleChange : undefined}
                         required
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />

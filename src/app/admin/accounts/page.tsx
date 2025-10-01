@@ -1,46 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  status: "active" | "inactive";
-  lastLogin: string;
-}
+import React, { useEffect, useState } from "react";
+import { getAccounts, addAccount, editAccount, deleteAccount, Account } from "@/api/accounts";
 
-export default function AccountsManagement() {
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: 1,
-      name: "Admin",
-      email: "admin@core.edu.vn",
-      role: "Admin",
-      status: "active",
-      lastLogin: "15/06/2023 10:30",
-    },
-    {
-      id: 2,
-      name: "Nguyễn Văn A",
-      email: "nguyenvana@core.edu.vn",
-      role: "Editor",
-      status: "active",
-      lastLogin: "14/06/2023 15:45",
-    },
-    {
-      id: 3,
-      name: "Trần Thị B",
-      email: "tranthib@core.edu.vn",
-      role: "Viewer",
-      status: "inactive",
-      lastLogin: "10/06/2023 09:15",
-    },
-  ]);
+export default function AccountsPage() {
+  const [users, setUsers] = useState<Account[]>([]);
+
+  // Load accounts on mount
+  useEffect(() => {
+    (async () => {
+      const data = await getAccounts();
+      setUsers(data);
+    })();
+  }, []);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<Account | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -49,11 +25,11 @@ export default function AccountsManagement() {
     confirmPassword: "",
   });
 
-  const handleOpenModal = (user: User | null = null) => {
+  const handleOpenModal = (user: Account | null = null) => {
     if (user) {
       setCurrentUser(user);
       setFormData({
-        name: user.name,
+        name: user.username,
         email: user.email,
         role: user.role,
         password: "",
@@ -87,7 +63,7 @@ export default function AccountsManagement() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
@@ -95,31 +71,22 @@ export default function AccountsManagement() {
       return;
     }
 
-    // Update Users
     if (currentUser) {
-      setUsers(
-        users.map((user) =>
-          user.id === currentUser.id
-            ? {
-                ...user,
-                name: formData.name,
-                email: formData.email,
-                role: formData.role,
-              }
-            : user
-        )
-      );
+      const updated = await editAccount(currentUser.id, {
+        username: formData.name,
+        email: formData.email,
+        role: formData.role,
+      });
+      setUsers(prev => prev.map(u => u.id === currentUser.id ? (updated as Account) : u));
     } else {
-      // Add Users
-      const newUser: User = {
-        id: users.length > 0 ? Math.max(...users.map((u) => u.id)) + 1 : 1,
-        name: formData.name,
+      const newAccount = await addAccount({
+        username: formData.name,
         email: formData.email,
         role: formData.role,
         status: "active",
         lastLogin: "Chưa đăng nhập",
-      };
-      setUsers([...users, newUser]);
+      });
+      setUsers(prev => [...prev, newAccount]);
     }
 
     handleCloseModal();
@@ -138,8 +105,9 @@ export default function AccountsManagement() {
     );
   };
 
-  const deleteUser = (userId: number) => {
+  const deleteUser = async (userId: number) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
+      await deleteAccount(userId);
       setUsers(users.filter((user) => user.id !== userId));
     }
   };
@@ -205,7 +173,7 @@ export default function AccountsManagement() {
                 <tr key={user.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
-                      {user.name}
+                      {user.username}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

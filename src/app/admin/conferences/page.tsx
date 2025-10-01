@@ -1,57 +1,28 @@
 "use client";
 
-import React, { useState } from "react";
-
-interface Conference {
-  id: number;
-  title: string;
-  date: string;
-  location: string;
-  status: "upcoming" | "ongoing" | "completed";
-  featured: boolean;
-}
+import React, { useState, useEffect } from "react";
+import * as conferenceApi from "@/api/conferences";
+import type { Conference } from "@/api/conferences";
 
 export default function ConferenceManagement() {
-  const [conferences, setConferences] = useState<Conference[]>([
-    {
-      id: 1,
-      title: "Hội thảo về Trí tuệ nhân tạo trong Giáo dục",
-      date: "15/08/2023",
-      location: "Hội trường A, Học viện CORE",
-      status: "completed",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "Xu hướng Công nghệ 2023",
-      date: "20/09/2023",
-      location: "Hội trường B, Học viện CORE",
-      status: "completed",
-      featured: false,
-    },
-    {
-      id: 3,
-      title: "Phát triển kỹ năng lãnh đạo",
-      date: "10/12/2023",
-      location: "Trung tâm Hội nghị Quốc tế",
-      status: "upcoming",
-      featured: true,
-    },
-  ]);
-
+  const [conferences, setConferences] = useState<Conference[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentConference, setCurrentConference] = useState<Conference | null>(
-    null
-  );
+  const [currentConference, setCurrentConference] = useState<Conference | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     date: "",
     location: "",
     status: "upcoming",
     featured: false,
-    description: "",
-    image: "",
   });
+
+  useEffect(() => {
+    async function fetchConferences() {
+      const data = await conferenceApi.getConferences();
+      setConferences(data);
+    }
+    fetchConferences();
+  }, []);
 
   const handleOpenModal = (conference: Conference | null = null) => {
     if (conference) {
@@ -62,8 +33,6 @@ export default function ConferenceManagement() {
         location: conference.location,
         status: conference.status,
         featured: conference.featured,
-        description: "",
-        image: "",
       });
     } else {
       setCurrentConference(null);
@@ -73,8 +42,6 @@ export default function ConferenceManagement() {
         location: "",
         status: "upcoming",
         featured: false,
-        description: "",
-        image: "",
       });
     }
     setIsModalOpen(true);
@@ -105,60 +72,41 @@ export default function ConferenceManagement() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (currentConference) {
-      // Update Conferences
-      setConferences(
-        conferences.map((conference) =>
-          conference.id === currentConference.id
-            ? {
-                ...conference,
-                title: formData.title,
-                date: formData.date,
-                location: formData.location,
-                status: formData.status as "upcoming" | "ongoing" | "completed",
-                featured: formData.featured,
-              }
-            : conference
-        )
-      );
+      const updated = await conferenceApi.editConference(currentConference.id, {
+        ...formData,
+        status: formData.status as Conference["status"],
+      });
+      if (updated) {
+        setConferences((prev) => prev.map((c) => c.id === updated.id ? updated : c));
+      }
     } else {
-      // Add Conferences
-      const newConference: Conference = {
-        id:
-          conferences.length > 0
-            ? Math.max(...conferences.map((s) => s.id)) + 1
-            : 1,
-        title: formData.title,
-        date: formData.date,
-        location: formData.location,
-        status: formData.status as "upcoming" | "ongoing" | "completed",
-        featured: formData.featured,
-      };
-      setConferences([...conferences, newConference]);
+      const newConference = await conferenceApi.addConference({
+        ...formData,
+        status: formData.status as Conference["status"],
+      });
+      setConferences((prev) => [...prev, newConference]);
     }
-
     handleCloseModal();
   };
 
-  const deleteConference = (conferenceId: number) => {
+  const deleteConference = async (conferenceId: number) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa hội thảo này?")) {
-      setConferences(
-        conferences.filter((conference) => conference.id !== conferenceId)
-      );
+      await conferenceApi.deleteConference(conferenceId);
+      setConferences((prev) => prev.filter((conference) => conference.id !== conferenceId));
     }
   };
 
-  const toggleFeatured = (conferenceId: number) => {
-    setConferences(
-      conferences.map((conference) =>
-        conference.id === conferenceId
-          ? { ...conference, featured: !conference.featured }
-          : conference
-      )
-    );
+  const toggleFeatured = async (conferenceId: number) => {
+    const conference = conferences.find((c) => c.id === conferenceId);
+    if (conference) {
+      const updated = await conferenceApi.editConference(conferenceId, { featured: !conference.featured });
+      if (updated) {
+        setConferences((prev) => prev.map((c) => c.id === conferenceId ? updated : c));
+      }
+    }
   };
 
   return (
@@ -403,38 +351,6 @@ export default function ConferenceManagement() {
                       >
                         Đánh dấu là nổi bật
                       </label>
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="description"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Mô tả
-                      </label>
-                      <textarea
-                        id="description"
-                        name="description"
-                        rows={3}
-                        value={formData.description}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="image"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Hình ảnh URL
-                      </label>
-                      <input
-                        type="text"
-                        name="image"
-                        id="image"
-                        value={formData.image}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      />
                     </div>
                   </div>
                 </div>

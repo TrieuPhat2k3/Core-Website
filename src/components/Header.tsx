@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Search, LogIn, X } from "lucide-react";
 import Container from "./ui/Container";
 import Link from "next/link";
@@ -55,8 +56,78 @@ const Header: React.FC = () => {
     events: typeof events;
     courses: typeof courses;
   }>({ events: [], courses: [] });
+  const [user, setUser] = useState<{ username: string; role: string } | null>(null);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const router = useRouter();
 
   const searchRef = useRef<HTMLDivElement>(null);
+
+  // Always show login button on first load, only show user after login in this session
+  useEffect(() => {
+    setUser(null);
+    setLoggedIn(false);
+    function syncUser() {
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("coreapp_user");
+        if (stored) {
+          try {
+            setUser(JSON.parse(stored));
+            setLoggedIn(true);
+          } catch {
+            setUser(null);
+            setLoggedIn(false);
+          }
+        } else {
+          setUser(null);
+          setLoggedIn(false);
+        }
+      }
+    }
+    // Only update after login event (storage or focus)
+    function handleStorage(e: StorageEvent) {
+      if (e.key === "coreapp_user") syncUser();
+    }
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("focus", syncUser);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("focus", syncUser);
+    };
+  }, []);
+
+  // Also update user state after navigation (for SPA login redirect)
+  useEffect(() => {
+    const handle = () => {
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("coreapp_user");
+        if (stored) {
+          try {
+            setUser(JSON.parse(stored));
+          } catch {
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
+      }
+    };
+    window.addEventListener("focus", handle);
+    return () => {
+      window.removeEventListener("focus", handle);
+    };
+  }, []);
+
+  // Logout handler
+  const handleLogout = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("coreapp_user");
+      setUser(null);
+      setLoggedIn(false);
+      setUserMenuOpen(false);
+      router.push("/public/login");
+    }
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -221,14 +292,40 @@ const Header: React.FC = () => {
             </div>
           )}
         </div>
-        <div className="ml-auto flex items-center gap-2">
-          <LogIn className="hidden h-4 w-4 text-red-600 sm:block" />
-          <a
-            href="/public/login"
-            className="text-sm font-medium text-blue-900 hover:text-red-600"
-          >
-            Đăng nhập
-          </a>
+        <div className="ml-auto flex items-center gap-2 relative">
+          {loggedIn && user ? (
+            <>
+              <button
+                className="flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-900 font-medium focus:outline-none"
+                onClick={() => setUserMenuOpen((open) => !open)}
+                onBlur={() => setTimeout(() => setUserMenuOpen(false), 150)}
+              >
+                <span className="truncate max-w-[100px]">{user.username}</span>
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="#1e40af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
+              {userMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                  <div className="px-4 py-2 text-sm text-gray-700 border-b">{user.role === "admin" ? "Quản trị viên" : "Người dùng"}</div>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 rounded-b-lg"
+                  >
+                    Đăng xuất
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <LogIn className="hidden h-4 w-4 text-red-600 sm:block" />
+              <a
+                href="/public/login"
+                className="text-sm font-medium text-blue-900 hover:text-red-600"
+              >
+                Đăng nhập
+              </a>
+            </>
+          )}
         </div>
       </Container>
     </div>

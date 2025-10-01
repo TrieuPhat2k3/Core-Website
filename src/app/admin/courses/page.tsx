@@ -1,43 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import * as courseApi from "@/api/courses";
+import type { Course } from "@/api/courses";
 
-interface Course {
-  id: number;
-  title: string;
-  duration: string;
-  instructor: string;
-  status: "open" | "closed" | "upcoming";
-  featured: boolean;
-}
+// (Type imported from API)
 
-export default function CoursesManagement() {
-  const [courses, setCourses] = useState<Course[]>([
-    {
-      id: 1,
-      title: "Lập trình Web với React",
-      duration: "8 tuần",
-      instructor: "Nguyễn Văn A",
-      status: "open",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "Phát triển ứng dụng di động",
-      duration: "10 tuần",
-      instructor: "Trần Thị B",
-      status: "upcoming",
-      featured: false,
-    },
-    {
-      id: 3,
-      title: "Trí tuệ nhân tạo cơ bản",
-      duration: "12 tuần",
-      instructor: "Lê Văn C",
-      status: "closed",
-      featured: true,
-    },
-  ]);
+export default function CoursesPage() {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchCourses() {
+      setLoading(true);
+      const data = await courseApi.getCourses();
+      setCourses(data);
+      setLoading(false);
+    }
+    fetchCourses();
+  }, []);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentCourse, setCurrentCourse] = useState<Course | null>(null);
@@ -47,9 +28,6 @@ export default function CoursesManagement() {
     instructor: "",
     status: "upcoming",
     featured: false,
-    description: "",
-    image: "",
-    price: "",
   });
 
   const handleOpenModal = (course: Course | null = null) => {
@@ -61,9 +39,6 @@ export default function CoursesManagement() {
         instructor: course.instructor,
         status: course.status,
         featured: course.featured,
-        description: "",
-        image: "",
-        price: "",
       });
     } else {
       setCurrentCourse(null);
@@ -73,9 +48,6 @@ export default function CoursesManagement() {
         instructor: "",
         status: "upcoming",
         featured: false,
-        description: "",
-        image: "",
-        price: "",
       });
     }
     setIsModalOpen(true);
@@ -106,55 +78,41 @@ export default function CoursesManagement() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (currentCourse) {
-      // Update Courses
-      setCourses(
-        courses.map((course) =>
-          course.id === currentCourse.id
-            ? {
-                ...course,
-                title: formData.title,
-                duration: formData.duration,
-                instructor: formData.instructor,
-                status: formData.status as "open" | "closed" | "upcoming",
-                featured: formData.featured,
-              }
-            : course
-        )
-      );
+      const updated = await courseApi.editCourse(currentCourse.id, {
+        ...formData,
+        status: formData.status as Course["status"],
+      });
+      if (updated) {
+        setCourses((prev) => prev.map((c) => c.id === updated.id ? updated : c));
+      }
     } else {
-      // Add Courses
-      const newCourse: Course = {
-        id: courses.length > 0 ? Math.max(...courses.map((c) => c.id)) + 1 : 1,
-        title: formData.title,
-        duration: formData.duration,
-        instructor: formData.instructor,
-        status: formData.status as "open" | "closed" | "upcoming",
-        featured: formData.featured,
-      };
-      setCourses([...courses, newCourse]);
+      const newCourse = await courseApi.addCourse({
+        ...formData,
+        status: formData.status as Course["status"],
+      });
+      setCourses((prev) => [...prev, newCourse]);
     }
-
     handleCloseModal();
   };
 
-  const deleteCourse = (courseId: number) => {
+  const deleteCourse = async (courseId: number) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa khóa học này?")) {
-      setCourses(courses.filter((course) => course.id !== courseId));
+      await courseApi.deleteCourse(courseId);
+      setCourses((prev) => prev.filter((course) => course.id !== courseId));
     }
   };
 
-  const toggleFeatured = (courseId: number) => {
-    setCourses(
-      courses.map((course) =>
-        course.id === courseId
-          ? { ...course, featured: !course.featured }
-          : course
-      )
-    );
+  const toggleFeatured = async (courseId: number) => {
+    const course = courses.find((c) => c.id === courseId);
+    if (course) {
+      const updated = await courseApi.editCourse(courseId, { featured: !course.featured });
+      if (updated) {
+        setCourses((prev) => prev.map((c) => c.id === courseId ? updated : c));
+      }
+    }
   };
 
   return (
@@ -393,55 +351,6 @@ export default function CoursesManagement() {
                       >
                         Đánh dấu là nổi bật
                       </label>
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="description"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Mô tả
-                      </label>
-                      <textarea
-                        id="description"
-                        name="description"
-                        rows={3}
-                        value={formData.description}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="price"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Học phí
-                      </label>
-                      <input
-                        type="text"
-                        name="price"
-                        id="price"
-                        value={formData.price}
-                        onChange={handleChange}
-                        placeholder="Ví dụ: 5,000,000 VNĐ"
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="image"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Hình ảnh URL
-                      </label>
-                      <input
-                        type="text"
-                        name="image"
-                        id="image"
-                        value={formData.image}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      />
                     </div>
                   </div>
                 </div>

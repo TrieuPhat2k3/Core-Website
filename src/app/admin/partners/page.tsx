@@ -1,25 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
 
-interface Partner {
-  id: number;
-  name: string;
-  logo: string;
-}
-
+import React, { useEffect, useState } from "react";
+import { getPartners, addPartner, editPartner, deletePartner, Partner } from "@/api/partners";
 export default function PartnerManagement() {
-  const [partners, setPartners] = useState<Partner[]>([
-    { id: 1, name: "Green Academy", logo: "/assets/GreenAcademy-logo.png" },
-    { id: 2, name: "MB Bank", logo: "/assets/MB-Bank-logo.png" },
-    { id: 3, name: "IAIB", logo: "/assets/IAIB-logo.jpg" },
-    { id: 4, name: "iSpace", logo: "/assets/iSpace-logo.png" },
-    { id: 5, name: "EasyEdu", logo: "/assets/EasyEdu-logo.png" },
-    { id: 6, name: "NewGym", logo: "/assets/NewGym-logo.png" },
-  ]);
+  const [partners, setPartners] = useState<Partner[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPartner, setEditingPartner] = useState<Partner | null>(null);
   const [formData, setFormData] = useState({ name: "", logo: "" });
+
+  // Load partners on mount
+  useEffect(() => {
+    (async () => {
+      const data = await getPartners();
+      setPartners(data);
+    })();
+  }, []);
 
   const openModal = (partner: Partner | null = null) => {
     setEditingPartner(partner);
@@ -34,18 +30,22 @@ export default function PartnerManagement() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editingPartner) {
-      setPartners(partners.map(p => p.id === editingPartner.id ? { ...p, ...formData } : p));
+      const updated = await editPartner(editingPartner.id, formData);
+      setPartners(prev => prev.map(p => p.id === editingPartner.id ? (updated as Partner) : p));
     } else {
-      setPartners([...partners, { id: partners.length ? Math.max(...partners.map(p => p.id)) + 1 : 1, ...formData }]);
+      const newPartner = await addPartner(formData);
+      setPartners(prev => [...prev, newPartner]);
     }
     closeModal();
   };
-  const handleDelete = (id: number) => {
+
+  const handleDelete = async (id: number) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa đối tác này?")) {
-      setPartners(partners.filter(p => p.id !== id));
+      await deletePartner(id);
+      setPartners(prev => prev.filter(p => p.id !== id));
     }
   };
 

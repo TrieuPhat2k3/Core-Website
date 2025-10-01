@@ -1,44 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-
-interface Event {
-  id: number;
-  title: string;
-  date: string;
-  location: string;
-  status: "upcoming" | "ongoing" | "completed";
-  featured: boolean;
-}
+import React, { useState, useEffect } from "react";
+import * as eventApi from "@/api/events";
+import type { Event } from "@/api/events";
 
 export default function EventsManagement() {
-  const [events, setEvents] = useState<Event[]>([
-    {
-      id: 1,
-      title: "Lễ khai giảng năm học 2023-2024",
-      date: "05/09/2023",
-      location: "Sân trường Học viện CORE",
-      status: "completed",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "Ngày hội việc làm CORE 2023",
-      date: "15/11/2023",
-      location: "Hội trường A, Học viện CORE",
-      status: "upcoming",
-      featured: true,
-    },
-    {
-      id: 3,
-      title: "Cuộc thi Sáng tạo Công nghệ",
-      date: "20/12/2023",
-      location: "Khu vực thực hành, Học viện CORE",
-      status: "upcoming",
-      featured: false,
-    },
-  ]);
-
+  const [events, setEvents] = useState<Event[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
   const [formData, setFormData] = useState({
@@ -47,9 +14,15 @@ export default function EventsManagement() {
     location: "",
     status: "upcoming",
     featured: false,
-    description: "",
-    image: "",
   });
+
+  useEffect(() => {
+    async function fetchEvents() {
+      const data = await eventApi.getEvents();
+      setEvents(data);
+    }
+    fetchEvents();
+  }, []);
 
   const handleOpenModal = (event: Event | null = null) => {
     if (event) {
@@ -60,8 +33,6 @@ export default function EventsManagement() {
         location: event.location,
         status: event.status,
         featured: event.featured,
-        description: "",
-        image: "",
       });
     } else {
       setCurrentEvent(null);
@@ -71,8 +42,6 @@ export default function EventsManagement() {
         location: "",
         status: "upcoming",
         featured: false,
-        description: "",
-        image: "",
       });
     }
     setIsModalOpen(true);
@@ -103,53 +72,41 @@ export default function EventsManagement() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (currentEvent) {
-      // Update Events
-      setEvents(
-        events.map((event) =>
-          event.id === currentEvent.id
-            ? {
-                ...event,
-                title: formData.title,
-                date: formData.date,
-                location: formData.location,
-                status: formData.status as "upcoming" | "ongoing" | "completed",
-                featured: formData.featured,
-              }
-            : event
-        )
-      );
+      const updated = await eventApi.editEvent(currentEvent.id, {
+        ...formData,
+        status: formData.status as Event["status"],
+      });
+      if (updated) {
+        setEvents((prev) => prev.map((e) => e.id === updated.id ? updated : e));
+      }
     } else {
-      // Add Events
-      const newEvent: Event = {
-        id: events.length > 0 ? Math.max(...events.map((e) => e.id)) + 1 : 1,
-        title: formData.title,
-        date: formData.date,
-        location: formData.location,
-        status: formData.status as "upcoming" | "ongoing" | "completed",
-        featured: formData.featured,
-      };
-      setEvents([...events, newEvent]);
+      const newEvent = await eventApi.addEvent({
+        ...formData,
+        status: formData.status as Event["status"],
+      });
+      setEvents((prev) => [...prev, newEvent]);
     }
-
     handleCloseModal();
   };
 
-  const deleteEvent = (eventId: number) => {
+  const deleteEvent = async (eventId: number) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
-      setEvents(events.filter((event) => event.id !== eventId));
+      await eventApi.deleteEvent(eventId);
+      setEvents((prev) => prev.filter((event) => event.id !== eventId));
     }
   };
 
-  const toggleFeatured = (eventId: number) => {
-    setEvents(
-      events.map((event) =>
-        event.id === eventId ? { ...event, featured: !event.featured } : event
-      )
-    );
+  const toggleFeatured = async (eventId: number) => {
+    const event = events.find((e) => e.id === eventId);
+    if (event) {
+      const updated = await eventApi.editEvent(eventId, { featured: !event.featured });
+      if (updated) {
+        setEvents((prev) => prev.map((e) => e.id === eventId ? updated : e));
+      }
+    }
   };
 
   return (
@@ -394,38 +351,6 @@ export default function EventsManagement() {
                         >
                           Đánh dấu là nổi bật
                         </label>
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="description"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Mô tả
-                        </label>
-                        <textarea
-                          id="description"
-                          name="description"
-                          rows={3}
-                          value={formData.description}
-                          onChange={handleChange}
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="image"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Hình ảnh URL
-                        </label>
-                        <input
-                          type="text"
-                          name="image"
-                          id="image"
-                          value={formData.image}
-                          onChange={handleChange}
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        />
                       </div>
                     </div>
                   </div>

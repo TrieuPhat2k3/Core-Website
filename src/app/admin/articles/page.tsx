@@ -1,86 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
 
-interface Article {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  link: string;
-  type: "main-event" | "featured-content" | "announcement" | "news";
-  priority: number;
-  status: "active" | "inactive" | "scheduled";
-  startDate: string;
-  endDate: string;
-  position: "hero" | "featured-section" | "sidebar" | "footer";
-  targetAudience: string;
-  clickCount: number;
-  impressions: number;
-  createdAt: string;
-  updatedAt: string;
-}
+import React, { useEffect, useState } from "react";
+import { getArticles, addArticle, editArticle, deleteArticle as apiDeleteArticle, Article } from "@/api/articles";
 
 const ArticlesManagement = () => {
-  const [articles, setArticles] = useState<Article[]>([
-    {
-      id: 1,
-      title: "Hội thảo Chuyển đổi số 2024",
-      description:
-        "Sự kiện lớn nhất năm về chuyển đổi số và công nghệ AI trong giáo dục",
-      image: "/assets/conference.jpg",
-      link: "/events/digital-transformation-2024",
-      type: "main-event",
-      priority: 1,
-      status: "active",
-      startDate: "2024-01-01",
-      endDate: "2024-06-30",
-      position: "hero",
-      targetAudience: "Sinh viên, Giảng viên, Doanh nghiệp",
-      clickCount: 1250,
-      impressions: 15000,
-      createdAt: "2024-01-01",
-      updatedAt: "2024-01-15",
-    },
-    {
-      id: 2,
-      title: "Khóa học AI & Machine Learning",
-      description:
-        "Khóa học chuyên sâu về trí tuệ nhân tạo và học máy cho người mới bắt đầu",
-      image: "/assets/learning.png",
-      link: "/courses/ai-machine-learning",
-      type: "featured-content",
-      priority: 2,
-      status: "active",
-      startDate: "2024-02-01",
-      endDate: "2024-12-31",
-      position: "featured-section",
-      targetAudience: "Sinh viên IT, Lập trình viên",
-      clickCount: 890,
-      impressions: 12000,
-      createdAt: "2024-01-20",
-      updatedAt: "2024-02-01",
-    },
-    {
-      id: 3,
-      title: "Thông báo tuyển sinh 2024",
-      description:
-        "Thông tin chi tiết về tuyển sinh các ngành học mới năm 2024",
-      image: "/assets/target.jpg",
-      link: "/admission/2024",
-      type: "announcement",
-      priority: 3,
-      status: "scheduled",
-      startDate: "2024-03-01",
-      endDate: "2024-08-31",
-      position: "sidebar",
-      targetAudience: "Học sinh THPT, Phụ huynh",
-      clickCount: 0,
-      impressions: 0,
-      createdAt: "2024-02-15",
-      updatedAt: "2024-02-15",
-    },
-  ]);
+  const [articles, setArticles] = useState<Article[]>([]);
+
+  // Load articles on mount
+  useEffect(() => {
+    (async () => {
+      const data = await getArticles();
+      setArticles(data);
+    })();
+  }, []);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentArticle, setCurrentArticle] = useState<Article | null>(
@@ -171,39 +104,31 @@ const ArticlesManagement = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (currentArticle) {
-      setArticles((prev) =>
-        prev.map((article) =>
-          article.id === currentArticle.id
-            ? {
-                ...article,
-                ...formData,
-                updatedAt: new Date().toISOString().split("T")[0],
-              }
-            : article
-        )
-      );
+      const updated = await editArticle(currentArticle.id, formData);
+      setArticles(prev => prev.map(a => a.id === currentArticle.id ? (updated as Article) : a));
     } else {
-      const newArticle: Article = {
-        id: Date.now(),
+      const now = new Date().toISOString().split("T")[0];
+      const newArticle = await addArticle({
         ...formData,
         clickCount: 0,
         impressions: 0,
-        createdAt: new Date().toISOString().split("T")[0],
-        updatedAt: new Date().toISOString().split("T")[0],
-      };
-      setArticles((prev) => [...prev, newArticle]);
+        createdAt: now,
+        updatedAt: now,
+      });
+      setArticles(prev => [...prev, newArticle]);
     }
 
     handleCloseModal();
   };
 
-  const deleteArticle = (id: number) => {
+  const deleteArticleHandler = async (id: number) => {
     if (confirm("Bạn có chắc chắn muốn xóa bài viết này?")) {
-      setArticles((prev) => prev.filter((article) => article.id !== id));
+      await apiDeleteArticle(id);
+      setArticles(prev => prev.filter((article) => article.id !== id));
     }
   };
 
@@ -476,7 +401,7 @@ const ArticlesManagement = () => {
                       Sửa
                     </button>
                     <button
-                      onClick={() => deleteArticle(article.id)}
+                      onClick={() => deleteArticleHandler(article.id)}
                       className="text-red-600 hover:text-red-900"
                     >
                       Xóa

@@ -2,14 +2,23 @@
 
 import React, { useState } from "react";
 
-const mockUsers = [
-  // { username: "admin", password: "admin123", role: "Administrator" },
-  // { username: "user", password: "user123", role: "Regular User" },
-  // { username: "test", password: "test123", role: "Test User" },
-  { username: "demo", password: "demo123", role: "Demo User" }
-];
+import { useRouter } from "next/navigation";
+
+
+// This function can be replaced with a real API call in the future
+async function loginUser(username: string, password: string) {
+  // Mock users for now
+  const mockUsers = [
+    { username: "admin", password: "admin123", role: "admin" },
+    { username: "user", password: "user123", role: "user" }
+  ];
+  // Simulate async (e.g., API call)
+  await new Promise(res => setTimeout(res, 200));
+  return mockUsers.find(u => u.username === username && u.password === password) || null;
+}
 
 const LoginForm: React.FC = () => {
+  const router = useRouter();
   const [credentials, setCredentials] = useState({
     username: "",
     password: ""
@@ -24,17 +33,23 @@ const LoginForm: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Check against mock data
-    const user = mockUsers.find(u => 
-      u.username === credentials.username && u.password === credentials.password
-    );
-
+    // Use the loginUser function (mock or real API)
+    const user = await loginUser(credentials.username, credentials.password);
     if (user) {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("coreapp_user", JSON.stringify({ username: user.username, role: user.role }));
+      }
       setMessage(`Đăng nhập thành công! Chào mừng ${user.username} (${user.role})`);
       setCredentials({ username: "", password: "" });
+      setTimeout(() => {
+        if (user.role === "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/public/home");
+        }
+      }, 800);
     } else {
       setMessage("Tên đăng nhập hoặc mật khẩu không đúng!");
     }
@@ -93,11 +108,12 @@ const LoginForm: React.FC = () => {
         <div className="mt-6 p-4 bg-gray-50 rounded-lg">
           <h3 className="text-sm font-semibold text-gray-700 mb-2">Test Accounts:</h3>
           <div className="text-xs text-gray-600 space-y-1">
-            {mockUsers.map((user, index) => (
-              <div key={index}>
-                <strong>{user.username}</strong> / <strong>{user.password}</strong> ({user.role})
-              </div>
-            ))}
+            <div>
+              <strong>admin</strong> / <strong>admin123</strong> (admin)
+            </div>
+            <div>
+              <strong>user</strong> / <strong>user123</strong> (user)
+            </div>
           </div>
         </div>
       </div>

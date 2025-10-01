@@ -1,135 +1,73 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import * as categoryApi from "@/api/categories";
+import type { Category } from "@/api/categories";
 
-interface Category {
-  id: number;
-  name: string;
-  type: "conference" | "event" | "course";
-  description: string;
-  isActive: boolean;
-  itemCount: number;
-}
-
-export default function CategoryManagement() {
-  const [categories, setCategories] = useState<Category[]>([
-    {
-      id: 1,
-      name: "Công Nghệ",
-      type: "conference",
-      description: "Hội nghị về công nghệ",
-      isActive: true,
-      itemCount: 5,
-    },
-    {
-      id: 2,
-      name: "Kinh Doanh",
-      type: "event",
-      description: "Sự kiện về kinh doanh",
-      isActive: true,
-      itemCount: 8,
-    },
-    {
-      id: 3,
-      name: "Lập Trình",
-      type: "course",
-      description: "Khóa hoc về lập trình",
-      isActive: true,
-      itemCount: 12,
-    },
-    {
-      id: 4,
-      name: "Marketing",
-      type: "conference",
-      description: "Hôi nghị về marketing",
-      isActive: false,
-      itemCount: 3,
-    },
-  ]);
+export default function CategoriesPage() {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [formData, setFormData] = useState({
     name: "",
-    type: "conference" as "conference" | "event" | "course",
     description: "",
-    isActive: true,
   });
 
-  const [filterType, setFilterType] = useState<
-    "Tất Cả" | "conference" | "event" | "course"
-  >("Tất Cả");
+  // No type filter, as API does not provide type field
+  const [filterText, setFilterText] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (editingCategory) {
-      setCategories(
-        categories.map((cat) =>
-          cat.id === editingCategory.id ? { ...cat, ...formData } : cat
-        )
-      );
-    } else {
-      const newCategory: Category = {
-        id: Date.now(),
-        ...formData,
-        itemCount: 0,
-      };
-      setCategories([...categories, newCategory]);
+  // Fetch categories on mount
+  useEffect(() => {
+    async function fetchCategories() {
+      setLoading(true);
+      const data = await categoryApi.getCategories();
+      setCategories(data);
+      setLoading(false);
     }
+    fetchCategories();
+  }, []);
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingCategory) {
+      const updated = await categoryApi.editCategory(editingCategory.id, formData);
+      if (updated) {
+        setCategories((prev) => prev.map((cat) => cat.id === updated.id ? updated : cat));
+      }
+    } else {
+      const newCategory = await categoryApi.addCategory(formData);
+      setCategories((prev) => [...prev, newCategory]);
+    }
     setIsModalOpen(false);
     setEditingCategory(null);
-    setFormData({
-      name: "",
-      type: "conference",
-      description: "",
-      isActive: true,
-    });
+    setFormData({ name: "", description: "" });
   };
 
   const handleEdit = (category: Category) => {
     setEditingCategory(category);
     setFormData({
       name: category.name,
-      type: category.type,
       description: category.description,
-      isActive: category.isActive,
     });
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (confirm("Bạn chắc chắn muốn xóa danh mục này?")) {
-      setCategories(categories.filter((cat) => cat.id !== id));
+      await categoryApi.deleteCategory(id);
+      setCategories((prev) => prev.filter((cat) => cat.id !== id));
     }
   };
 
-  const toggleStatus = (id: number) => {
-    setCategories(
-      categories.map((cat) =>
-        cat.id === id ? { ...cat, isActive: !cat.isActive } : cat
+  // No status toggle or type filter, as API does not provide these fields
+  const filteredCategories = filterText
+    ? categories.filter((cat) =>
+        cat.name.toLowerCase().includes(filterText.toLowerCase()) ||
+        cat.description.toLowerCase().includes(filterText.toLowerCase())
       )
-    );
-  };
-
-  const filteredCategories =
-    filterType === "Tất Cả"
-      ? categories
-      : categories.filter((cat) => cat.type === filterType);
-
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "conference":
-        return "bg-blue-100 text-blue-800";
-      case "event":
-        return "bg-green-100 text-green-800";
-      case "course":
-        return "bg-purple-100 text-purple-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+    : categories;
 
   return (
     <div className="p-6">
@@ -143,38 +81,15 @@ export default function CategoryManagement() {
         </button>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="mb-6">
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
-            {[
-              { value: "Tất Cả", label: "Tất Cả" },
-              { value: "conference", label: "Hội Thảo" },
-              { value: "event", label: "Sự Kiện" },
-              { value: "course", label: "Khóa Học" },
-            ].map((type) => (
-              <button
-                key={type.value}
-                onClick={() =>
-                  setFilterType(
-                    type.value as "Tất Cả" | "conference" | "event" | "course"
-                  )
-                }
-                className={`py-2 px-1 border-b-2 font-medium text-sm capitalize ${
-                  filterType === type.value
-                    ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
-              >
-                {type.label}{" "}
-                {type.value !== "Tất Cả" &&
-                  `(${
-                    categories.filter((cat) => cat.type === type.value).length
-                  })`}
-              </button>
-            ))}
-          </nav>
-        </div>
+      {/* Filter/Search */}
+      <div className="mb-6 flex items-center gap-4">
+        <input
+          type="text"
+          placeholder="Tìm kiếm danh mục..."
+          value={filterText}
+          onChange={(e) => setFilterText(e.target.value)}
+          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
+        />
       </div>
 
       {/* Categories Table */}
@@ -186,16 +101,7 @@ export default function CategoryManagement() {
                 Tên Danh Mục
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Loại
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Chi Tiết
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Số Lượng
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Trạng Thái
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Hành Động
@@ -203,66 +109,48 @@ export default function CategoryManagement() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredCategories.map((category) => (
-              <tr key={category.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    {category.name}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full capitalize ${getTypeColor(
-                      category.type
-                    )}`}
-                  >
-                    {category.type === "conference"
-                      ? "Hội Thảo"
-                      : category.type === "event"
-                      ? "Sự Kiện"
-                      : category.type === "course"
-                      ? "Khóa Học"
-                      : category.type}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm text-gray-900 max-w-xs truncate">
-                    {category.description}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">
-                    {category.itemCount}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <button
-                    onClick={() => toggleStatus(category.id)}
-                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      category.isActive
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {category.isActive ? "Hoạt Động" : "Không Hoạt Động"}
-                  </button>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button
-                    onClick={() => handleEdit(category)}
-                    className="text-blue-600 hover:text-blue-900 mr-4"
-                  >
-                    Sửa
-                  </button>
-                  <button
-                    onClick={() => handleDelete(category.id)}
-                    className="text-red-600 hover:text-red-900"
-                  >
-                    Xóa
-                  </button>
+            {loading ? (
+              <tr>
+                <td colSpan={3} className="text-center py-8 text-gray-500">
+                  Đang tải dữ liệu...
                 </td>
               </tr>
-            ))}
+            ) : filteredCategories.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="text-center py-8 text-gray-500">
+                  Không có danh mục nào.
+                </td>
+              </tr>
+            ) : (
+              filteredCategories.map((category) => (
+                <tr key={category.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">
+                      {category.name}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-900 max-w-xs truncate">
+                      {category.description}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button
+                      onClick={() => handleEdit(category)}
+                      className="text-blue-600 hover:text-blue-900 mr-4"
+                    >
+                      Sửa
+                    </button>
+                    <button
+                      onClick={() => handleDelete(category.id)}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      Xóa
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -277,7 +165,7 @@ export default function CategoryManagement() {
             <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white z-50">
               <div className="mt-3">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
-                  {editingCategory ? "Edit Category" : "Add New Category"}
+                  {editingCategory ? "Cập nhật danh mục" : "Thêm danh mục mới"}
                 </h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
@@ -296,28 +184,6 @@ export default function CategoryManagement() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Loại
-                    </label>
-                    <select
-                      value={formData.type}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          type: e.target.value as
-                            | "conference"
-                            | "event"
-                            | "course",
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="conference">Hội Thảo</option>
-                      <option value="event">Sự Kiện</option>
-                      <option value="course">Khóa Học</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Chi Tiết
                     </label>
                     <textarea
@@ -333,35 +199,13 @@ export default function CategoryManagement() {
                       required
                     />
                   </div>
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="isActive"
-                      checked={formData.isActive}
-                      onChange={(e) =>
-                        setFormData({ ...formData, isActive: e.target.checked })
-                      }
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <label
-                      htmlFor="isActive"
-                      className="ml-2 block text-sm text-gray-900"
-                    >
-                      Hoạt Động
-                    </label>
-                  </div>
                   <div className="flex justify-end space-x-3 pt-4">
                     <button
                       type="button"
                       onClick={() => {
                         setIsModalOpen(false);
                         setEditingCategory(null);
-                        setFormData({
-                          name: "",
-                          type: "conference",
-                          description: "",
-                          isActive: true,
-                        });
+                        setFormData({ name: "", description: "" });
                       }}
                       className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
                     >
