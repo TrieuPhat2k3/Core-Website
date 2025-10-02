@@ -9,8 +9,9 @@ export interface Partner {
 }
 
 let mockPartners: Partner[] = [
-  { id: 1, name: "Partner 1", logo: "/assets/core-logo.png" },
-  { id: 2, name: "Partner 2", logo: "/assets/GreenAcademy-logo.png" }
+  { id: 1, name: "IAIB", logo: "/assets/IAIB-logo.jpg" },
+  { id: 2, name: "Green Academy", logo: "/assets/GreenAcademy-logo.png" },
+  { id: 3, name: "iSpace", logo: "/assets/iSpace-logo.png" }
 ];
 
 export async function getPartners(): Promise<Partner[]> {

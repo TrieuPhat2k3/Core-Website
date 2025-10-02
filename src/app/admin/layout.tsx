@@ -1,17 +1,33 @@
 "use client";
 
 import "../globals.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const router = useRouter();
+
+  // Admin authentication check
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("coreapp_user");
+      if (!stored) {
+        router.replace("/public/login");
+        return;
+      }
+      try {
+        const user = JSON.parse(stored);
+        if (!user || user.role !== "admin") {
+          router.replace("/public/login");
+        }
+      } catch {
+        router.replace("/public/login");
+      }
+    }
+  }, [router]);
 
   const navItems = [
     { name: "Dashboard", href: "/admin", icon: "chart-bar" },
